@@ -37,225 +37,29 @@
 
 ## 🚀 Quick Start
 
-### Installation
-
 ```bash
-# Clone repository
-git clone https://github.com/boubli/djinn.git
-cd djinn
-
-# Install
-pip install -e .
-
-# Run
-djinn "list all files larger than 100MB"
+pip install djinn-cli
 ```
 
-### Requirements
+## 📖 Documentation
 
-- Python 3.8+
-- Ollama, LM Studio, or OpenAI API key
+For full documentation, usage examples, and the complete command reference, visit our website:
+👉 **[djinn.boubli.tech](https://boubli.github.io/djinn/)**
 
-## 📖 Usage
+- **[Installation Guide](https://boubli.github.io/djinn/installation.html)**
+- **[Command Reference](https://boubli.github.io/djinn/commands.html)**
+- **[Configuration](https://boubli.github.io/djinn/configuration.html)**
 
-### Basic Command
+## ✨ Features
 
-```bash
-djinn "your natural language prompt"
-```
-
-### Execute Directly
-
-```bash
-djinn -x "delete all temp files"          # Execute after confirmation
-djinn -x -y "create backup folder"        # Execute without confirmation
-```
-
-### Interactive Mode
-
-```bash
-djinn -i                                   # Start interactive chat
-djinn chat                                 # AI conversation mode
-```
-
-## 🎯 87 Commands by Category
-
-### 🔧 DevOps
-| Command | Description |
-|---------|-------------|
-| `djinn git "..."` | Git commands |
-| `djinn docker "..."` | Docker commands |
-| `djinn k8s "..."` | Kubernetes/kubectl |
-| `djinn terraform "..."` | Terraform |
-| `djinn helm "..."` | Helm charts |
-| `djinn ansible "..."` | Ansible playbooks |
-| `djinn vagrant "..."` | Vagrant VMs |
-
-### ☁️ Cloud
-| Command | Description |
-|---------|-------------|
-| `djinn aws "..."` | AWS CLI |
-| `djinn gcp "..."` | Google Cloud |
-| `djinn azure "..."` | Azure CLI |
-| `djinn ssh user@host "..."` | SSH commands |
-| `djinn api "..."` | Curl/API requests |
-
-### 🗄️ Databases
-| Command | Description |
-|---------|-------------|
-| `djinn mysql "..."` | MySQL |
-| `djinn postgres "..."` | PostgreSQL |
-| `djinn redis "..."` | Redis |
-| `djinn mongo "..."` | MongoDB |
-| `djinn sql "..."` | SQL queries |
-| `djinn graphql "..."` | GraphQL queries |
-
-### 🛠️ System Admin
-| Command | Description |
-|---------|-------------|
-| `djinn npm "..."` | NPM/Node.js |
-| `djinn pip "..."` | Python pip |
-| `djinn systemctl "..."` | Service management |
-| `djinn cron "..."` | Cron jobs |
-| `djinn nginx "..."` | Nginx config |
-
-### 🔒 Security
-| Command | Description |
-|---------|-------------|
-| `djinn firewall "..."` | Firewall/ufw |
-| `djinn ssl "..."` | SSL/TLS certs |
-| `djinn network "..."` | Network diagnostics |
-| `djinn nmap "..."` | Port scanning |
-| `djinn gpg "..."` | Encryption |
-
-### 🎬 Multimedia
-| Command | Description |
-|---------|-------------|
-| `djinn ffmpeg "..."` | Video/audio processing |
-| `djinn magick "..."` | Image processing |
-
-### 💻 Languages
-| Command | Description |
-|---------|-------------|
-| `djinn python "..."` | Python commands |
-| `djinn node "..."` | Node.js |
-| `djinn rust "..."` | Rust/Cargo |
-| `djinn go "..."` | Go |
-| `djinn java "..."` | Java/Maven/Gradle |
-| `djinn cpp "..."` | C++ compilation |
-
-### 🛠️ Dev Tools
-| Command | Description |
-|---------|-------------|
-| `djinn pytest "..."` | Pytest |
-| `djinn lint "..."` | Linting tools |
-| `djinn debug "..."` | Debugging |
-| `djinn regex "..."` | Regex patterns |
-| `djinn awk "..."` | AWK/sed |
-| `djinn jq "..."` | JSON processing |
-| `djinn make "..."` | Makefiles |
-
-### 📱 Mobile
-| Command | Description |
-|---------|-------------|
-| `djinn react "..."` | React/Next.js |
-| `djinn flutter "..."` | Flutter/Dart |
-| `djinn android "..."` | Android/ADB |
-| `djinn ios "..."` | iOS/Xcode |
-
-### 📊 Data & ML
-| Command | Description |
-|---------|-------------|
-| `djinn pandas "..."` | Pandas code |
-| `djinn spark "..."` | Apache Spark |
-| `djinn jupyter "..."` | Jupyter notebooks |
-
-### 🧠 AI Utilities
-| Command | Description |
-|---------|-------------|
-| `djinn chat` | AI conversation |
-| `djinn translate "cmd" --to powershell` | Shell translation |
-| `djinn codegen "..." --lang python` | Code generation |
-| `djinn script "..."` | Shell scripts |
-| `djinn oneliner "..."` | One-liners |
-
-### 📝 Productivity
-| Command | Description |
-|---------|-------------|
-| `djinn commit "..."` | Commit messages |
-| `djinn changelog "..."` | Changelog entries |
-| `djinn readme "..."` | README sections |
-| `djinn docs "..."` | Documentation |
-| `djinn todo "..."` | TODO comments |
-
-### 🔍 Smart Features
-| Command | Description |
-|---------|-------------|
-| `djinn explain "cmd"` | Explain a command |
-| `djinn undo "cmd"` | Reverse a command |
-| `djinn suggest "..."` | Multiple options |
-| `djinn check "cmd"` | Danger detection |
-| `djinn dryrun "cmd"` | Preview effects |
-
-### 📁 Templates & Snippets
-| Command | Description |
-|---------|-------------|
-| `djinn template list` | View templates |
-| `djinn template run python-project myapp` | Use template |
-| `djinn snippet add deploy "..."` | Save snippet |
-| `djinn alias add cleanup "..."` | Create alias |
-
-## ⚙️ Configuration
-
-```bash
-djinn config --backend ollama           # Set LLM backend
-djinn config --model llama3             # Set model
-djinn theme hacker                      # Change theme
-djinn config --show                     # View config
-```
-
-## 🎨 Themes
-
-- `default` - Green terminal
-- `hacker` - Matrix green
-- `ocean` - Blue tones
-- `purple` - Purple gradient
-- `minimal` - Clean white
-
-## 📦 Project Structure
-
-```
-djinn/
-├── cli.py              # Main CLI (2200+ lines)
-├── core/               # 14 plugin files
-│   ├── engine.py       # LLM engine
-│   ├── backends.py     # Ollama, LMStudio, OpenAI
-│   ├── plugins.py      # Git, Docker, Undo
-│   ├── cloud.py        # AWS, GCP, Azure, K8s
-│   ├── ai.py           # Chat, Translate, CodeGen
-│   └── ...
-└── ui/
-    ├── logo.py
-    ├── spinner.py
-    └── themes.py
-```
-
-## 🔄 Version History
-
-### v1.0.0 (2026-01-10)
-- 🎉 Initial release
-- 87 specialized commands
-- Multi-LLM backend support
-- 5 color themes
-- Template and snippet system
+- 🤖 **AI-Powered**: Natural language to shell commands
+- ⚡ **87+ Commands**: DevOps, Cloud, Databases, and more
+- 🔄 **Multi-LLM**: Ollama, LM Studio, OpenAI
+- 🎨 **Themable**: 5 beautiful terminal themes
 
 ## 🤝 Contributing
 
-Contributions welcome! Feel free to:
-- Add new command plugins
-- Improve LLM prompts
-- Add new themes
-- Fix bugs
+Contributions are welcome! Please check the website for guidelines.
 
 ## 📄 License
 
@@ -264,6 +68,5 @@ MIT License - © 2026 [Youssef Boubli](https://boubli.tech)
 ---
 
 <p align="center">
-  <b>Built with ⚡ power by <a href="https://boubli.tech">Youssef Boubli</a></b><br>
-  <sub>Terminal Sorcery at Your Command</sub>
+  <b>Built with ⚡ power by <a href="https://boubli.tech">Youssef Boubli</a></b>
 </p>

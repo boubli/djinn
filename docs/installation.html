@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation - DJINN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="container">
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <img src="../assets/djinn_logo.png" alt="DJINN" class="logo-small">
+                DJINN
+            </a>
+            <nav>
+                <a href="installation.html" class="active">Installation</a>
+                <a href="commands.html">Commands</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="https://github.com/boubli/djinn">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Installation</h1>
+        <p>Get started with DJINN on Windows, macOS, or Linux.</p>
+
+        <h2>Prerequisites</h2>
+        <ul>
+            <li>Python 3.8 or higher</li>
+            <li>Access to an LLM (Ollama running locally, or an API key for OpenAI/DeepSeek)</li>
+        </ul>
+
+        <h2>Install via pip</h2>
+        <p>The recommended way to install is via PyPI (coming soon) or directly from source:</p>
+        <pre><code>git clone https://github.com/boubli/djinn.git
+cd djinn
+pip install -e .</code></pre>
+
+        <h2>Verify Installation</h2>
+        <p>Run the help command to check if everything is working:</p>
+        <pre><code>djinn --help</code></pre>
+
+        <h2>Setting up the Backend</h2>
+        <p>By default, DJINN may look for a local Ollama instance. To configure it:</p>
+        <pre><code># For Ollama (Local)
+djinn config --backend ollama --model llama3
+
+# For OpenAI (Cloud)
+export OPENAI_API_KEY="sk-..."
+djinn config --backend openai --model gpt-4o</code></pre>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Managed by <a href="https://boubli.tech">Youssef Boubli</a>. Open source under MIT License.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

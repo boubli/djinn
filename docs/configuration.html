@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration - DJINN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="container">
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <img src="../assets/djinn_logo.png" alt="DJINN" class="logo-small">
+                DJINN
+            </a>
+            <nav>
+                <a href="installation.html">Installation</a>
+                <a href="commands.html">Commands</a>
+                <a href="configuration.html" class="active">Configuration</a>
+                <a href="https://github.com/boubli/djinn">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Configuration</h1>
+        <p>Customize DJINN's behavior, themes, and AI backend.</p>
+
+        <h2>LLM Backend</h2>
+        <p>DJINN supports multiple backends. Switch between them instantly.</p>
+        <pre><code>djinn config --backend ollama
+djinn config --backend openai
+djinn config --backend lmstudio</code></pre>
+
+        <h2>Choosing Models</h2>
+        <p>Specify which model fits your needs (speed vs precision):</p>
+        <pre><code>djinn config --model llama3     # Fast, good for daily use
+djinn config --model gpt-4      # High precision</code></pre>
+
+        <h2>Themes</h2>
+        <p>DJINN comes with 5 built-in themes:</p>
+        <table>
+            <tr>
+                <th>Theme</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td><code>default</code></td>
+                <td>Classic green terminal style</td>
+            </tr>
+            <tr>
+                <td><code>hacker</code></td>
+                <td>Matrix-inspired aesthetic</td>
+            </tr>
+            <tr>
+                <td><code>ocean</code></td>
+                <td>Calm blue color palette</td>
+            </tr>
+            <tr>
+                <td><code>purple</code></td>
+                <td>Vibrant synthwave style</td>
+            </tr>
+            <tr>
+                <td><code>minimal</code></td>
+                <td>Clean monochrome (High contrast)</td>
+            </tr>
+        </table>
+        <pre><code>djinn theme purple</code></pre>
+
+        <h2>View Configuration</h2>
+        <p>To see your current settings:</p>
+        <pre><code>djinn config --show</code></pre>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Managed by <a href="https://boubli.tech">Youssef Boubli</a>. Open source under MIT License.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
