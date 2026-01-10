@@ -25,9 +25,18 @@ from djinn.core import DjinnEngine, HistoryManager, ContextAnalyzer, AliasManage
 from djinn.ui import Logo, Theme, DjinnSpinner
 
 
+import ctypes
 # Initialize console with theme
 console = Console(theme=Theme.get_theme())
 spinner = DjinnSpinner(console)
+
+def set_console_title():
+    """Set the terminal window title on Windows."""
+    if sys.platform == "win32":
+        try:
+            ctypes.windll.kernel32.SetConsoleTitleW("DJINN - Terminal Sorcery")
+        except:
+            pass
 
 
 def get_config_path() -> Path:
@@ -46,13 +55,7 @@ def load_config() -> dict:
                 return json.load(f)
         except:
             pass
-    return {
-        "backend": "ollama",
-        "model": None,
-        "context_enabled": True,
-        "auto_copy": True,
-        "confirm_execute": True,
-    }
+    return {}
 
 
 def save_config(config: dict):
@@ -124,14 +127,24 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
     
     # Load config
     config = load_config()
+    
+    # If no config (first time), run setup
+    if not config and not version:
+        ctx.invoke(setup)
+        config = load_config()
+        if not config: # If user cancelled setup
+            return
+
     backend = backend or config.get("backend", "ollama")
     model = model or config.get("model")
+    api_key = config.get("api_key")
     
     # Show logo
+    set_console_title()
     Logo.print_logo(console, mini=mini)
     
     if interactive:
-        run_interactive(backend, model, context)
+        run_interactive(backend, model, context, api_key)
     elif prompt:
         prompt_text = " ".join(prompt)
         
@@ -139,21 +152,20 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
         alias_mgr = AliasManager()
         prompt_text = alias_mgr.resolve(prompt_text)
         
-        run_single(prompt_text, backend, model, context, explain, execute, not yes)
+        run_single(prompt_text, backend, model, context, explain, execute, not yes, api_key)
     else:
-        # Show help
-        console.print("\n[muted]Usage: djinn \"your command description\"[/muted]")
-        console.print("[muted]       djinn -x \"command\" (execute directly)[/muted]")
-        console.print("[muted]       djinn -i  (interactive mode)[/muted]")
-        console.print("[muted]       djinn --help  (all options)[/muted]\n")
-        
-        # If running as a frozen executable (EXE) and no args, wait so it doesn't auto-close
+        # If running as a frozen executable (EXE) and no args, enter interactive mode automatically
         if getattr(sys, 'frozen', False):
-            console.print("\n[muted]Press Enter to exit...[/muted]")
-            input()
+            run_interactive(backend, model, context)
+        else:
+            # Show help
+            console.print("\n[muted]Usage: djinn \"your command description\"[/muted]")
+            console.print("[muted]       djinn -x \"command\" (execute directly)[/muted]")
+            console.print("[muted]       djinn -i  (interactive mode)[/muted]")
+            console.print("[muted]       djinn --help  (all options)[/muted]\n")
 
 
-def run_single(prompt: str, backend: str, model: str, use_context: bool, explain: bool, execute: bool, confirm: bool):
+def run_single(prompt: str, backend: str, model: str, use_context: bool, explain: bool, execute: bool, confirm: bool, api_key: str = None):
     """Run a single command generation."""
     # Get context if enabled
     context_str = None
@@ -170,7 +182,7 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
     console.print("[muted]" + "=" * 50 + "[/muted]")
     
     # Generate command
-    engine = DjinnEngine(backend=backend, model=model)
+    engine = DjinnEngine(backend=backend, model=model, api_key=api_key)
     history = HistoryManager()
     
     with spinner.status("Summoning command..."):
@@ -213,9 +225,9 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
         spinner.print_error("Failed to generate command. Is your LLM backend running?")
 
 
-def run_interactive(backend: str, model: str, use_context: bool):
+def run_interactive(backend: str, model: str, use_context: bool, api_key: str = None):
     """Run interactive mode."""
-    engine = DjinnEngine(backend=backend, model=model)
+    engine = DjinnEngine(backend=backend, model=model, api_key=api_key)
     history = HistoryManager()
     analyzer = ContextAnalyzer()
     alias_mgr = AliasManager()
@@ -236,6 +248,9 @@ def run_interactive(backend: str, model: str, use_context: bool):
             # Exit commands
             if user_input.lower() in ["exit", "quit", "q"]:
                 console.print("[muted]Goodbye![/muted]")
+                if getattr(sys, 'frozen', False):
+                    console.print("\n[muted]Press Enter to exit...[/muted]")
+                    input()
                 break
             
             # Run last command
@@ -381,6 +396,14 @@ def history(limit, search, favorites):
 def config(backend, model, show):
     """Configure Djinn settings."""
     current_config = load_config()
+    if not current_config:
+        current_config = {
+            "backend": "ollama",
+            "model": None,
+            "context_enabled": True,
+            "auto_copy": True,
+            "confirm_execute": True,
+        }
     
     if show:
         console.print("\n[highlight]Current Configuration[/highlight]\n")
@@ -396,6 +419,87 @@ def config(backend, model, show):
     
     save_config(current_config)
     console.print("[success]Configuration updated![/success]")
+
+
+@main.command()
+def setup():
+    """Guided setup for first-time users."""
+    from djinn.backends.ollama import OllamaBackend
+    from djinn.backends.lmstudio import LMStudioBackend
+    
+    Logo.print_logo(console)
+    console.print("\n[highlight]🧞‍♂️ Welcome to the DJINN Setup Wizard![/highlight]")
+    console.print("[muted]Let's get your AI backend configured so you can start using Terminal Sorcery.[/muted]\n")
+    
+    # 1. Detection
+    with spinner.status("Detecting local LLMs..."):
+        ollama = OllamaBackend()
+        lmstudio = LMStudioBackend()
+        
+        has_ollama = ollama.is_available()
+        has_lmstudio = lmstudio.is_available()
+    
+    options = []
+    if has_ollama:
+        options.append("ollama")
+        console.print("[success]✔ Detected Ollama running on localhost:11434[/success]")
+    if has_lmstudio:
+        options.append("lmstudio")
+        console.print("[success]✔ Detected LM Studio running on localhost:1234[/success]")
+    
+    options.append("openai")
+    
+    # 2. Choose Backend
+    choices = ["ollama", "lmstudio", "openai"]
+    default_choice = options[0] if options else "ollama"
+    
+    console.print("\n[prompt]Which LLM backend do you want to use?[/prompt]")
+    if has_ollama or has_lmstudio:
+        console.print(f"[muted]Recommended based on detection: [bold]{default_choice}[/bold][/muted]")
+    
+    selected_backend = Prompt.ask(
+        "Backend",
+        choices=choices,
+        default=default_choice
+    )
+    
+    new_config = {
+        "backend": selected_backend,
+        "model": None,
+        "context_enabled": True,
+        "auto_copy": True,
+        "confirm_execute": True,
+    }
+    
+    # 3. Model / API Key
+    if selected_backend == "openai":
+        api_key = Prompt.ask("[prompt]Enter your OpenAI API Key[/prompt]", password=True)
+        if api_key:
+            # We store it in env or config
+            new_config["api_key"] = api_key
+        new_config["model"] = Prompt.ask("Model name", default="gpt-4o")
+    
+    elif selected_backend == "ollama":
+        models = ollama.list_models()
+        if models:
+            console.print(f"\n[muted]Detected models: {', '.join(models)}[/muted]")
+            new_config["model"] = Prompt.ask("Choose model", choices=models, default=models[0])
+        else:
+            new_config["model"] = Prompt.ask("Model name (e.g. llama3)", default="llama3")
+            
+    elif selected_backend == "lmstudio":
+        console.print("[muted]Note: LM Studio uses whichever model you have loaded in the app.[/muted]")
+        new_config["model"] = "local-model"
+
+    # 4. Save
+    save_config(new_config)
+    console.print("\n[success]✨ Setup Complete![/success]")
+    console.print("[muted]You are now ready to use DJINN.[/muted]")
+    console.print("\nTry running: [bold]djinn \"list all files in this directory\"[/bold]\n")
+    
+    if getattr(sys, 'frozen', False):
+        console.print("[muted]Press Enter to continue...[/muted]")
+        input()
 
 
 @main.command()
@@ -455,7 +559,7 @@ def git(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = GitPlugin(engine)
     
     console.print(f"\n[prompt]> Git:[/prompt] {prompt}")
@@ -489,7 +593,7 @@ def docker(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = DockerPlugin(engine)
     
     console.print(f"\n[prompt]> Docker:[/prompt] {prompt}")
@@ -523,7 +627,7 @@ def undo(command_text):
     
     command = " ".join(command_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = UndoPlugin(engine)
     
     console.print(f"\n[prompt]> Undo:[/prompt] {command}")
@@ -720,7 +824,7 @@ def suggest(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     
     console.print(f"\n[prompt]> Suggestions for:[/prompt] {prompt}")
     console.print("[muted]" + "=" * 50 + "[/muted]")
@@ -769,7 +873,7 @@ def ssh(server, prompt_text):
         user, host = "root", server
     
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = SSHPlugin(engine)
     
     console.print(f"\n[prompt]> SSH ({user}@{host}):[/prompt] {prompt}")
@@ -802,7 +906,7 @@ def api(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = APIPlugin(engine)
     
     console.print(f"\n[prompt]> API:[/prompt] {prompt}")
@@ -860,7 +964,7 @@ def aws(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = AWSPlugin(engine)
     
     console.print(f"\n[prompt]> AWS:[/prompt] {prompt}")
@@ -893,7 +997,7 @@ def gcp(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = GCPPlugin(engine)
     
     console.print(f"\n[prompt]> GCP:[/prompt] {prompt}")
@@ -926,7 +1030,7 @@ def azure(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = AzurePlugin(engine)
     
     console.print(f"\n[prompt]> Azure:[/prompt] {prompt}")
@@ -959,7 +1063,7 @@ def k8s(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = K8sPlugin(engine)
     
     console.print(f"\n[prompt]> Kubernetes:[/prompt] {prompt}")
@@ -992,7 +1096,7 @@ def terraform(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = TerraformPlugin(engine)
     
     console.print(f"\n[prompt]> Terraform:[/prompt] {prompt}")
@@ -1025,7 +1129,7 @@ def helm(prompt_text):
     
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     plugin = HelmPlugin(engine)
     
     console.print(f"\n[prompt]> Helm:[/prompt] {prompt}")
@@ -1058,7 +1162,7 @@ def dryrun(command_text):
     
     command = " ".join(command_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     analyzer = DryRun(engine)
     
     console.print(f"\n[prompt]> Dry-Run:[/prompt] {command}")
@@ -1112,7 +1216,7 @@ def npm(prompt_text):
     from djinn.core.sysadmin import NpmPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating npm command..."):
         command = NpmPlugin(engine).generate(prompt)
     if command:
@@ -1129,7 +1233,7 @@ def pip(prompt_text):
     from djinn.core.sysadmin import PipPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating pip command..."):
         command = PipPlugin(engine).generate(prompt)
     if command:
@@ -1146,7 +1250,7 @@ def systemctl(prompt_text):
     from djinn.core.sysadmin import SystemctlPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating systemctl command..."):
         command = SystemctlPlugin(engine).generate(prompt)
     if command:
@@ -1163,7 +1267,7 @@ def cron(prompt_text):
     from djinn.core.sysadmin import CronPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating cron expression..."):
         command = CronPlugin(engine).generate(prompt)
     if command:
@@ -1180,7 +1284,7 @@ def nginx(prompt_text):
     from djinn.core.sysadmin import NginxPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating nginx command..."):
         command = NginxPlugin(engine).generate(prompt)
     if command:
@@ -1197,7 +1301,7 @@ def mysql(prompt_text):
     from djinn.core.sysadmin import MySQLPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating MySQL command..."):
         command = MySQLPlugin(engine).generate(prompt)
     if command:
@@ -1214,7 +1318,7 @@ def postgres(prompt_text):
     from djinn.core.sysadmin import PostgresPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating PostgreSQL command..."):
         command = PostgresPlugin(engine).generate(prompt)
     if command:
@@ -1231,7 +1335,7 @@ def redis(prompt_text):
     from djinn.core.sysadmin import RedisPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Redis command..."):
         command = RedisPlugin(engine).generate(prompt)
     if command:
@@ -1248,7 +1352,7 @@ def mongo(prompt_text):
     from djinn.core.sysadmin import MongoPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating MongoDB command..."):
         command = MongoPlugin(engine).generate(prompt)
     if command:
@@ -1265,7 +1369,7 @@ def ffmpeg(prompt_text):
     from djinn.core.sysadmin import FFmpegPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating FFmpeg command..."):
         command = FFmpegPlugin(engine).generate(prompt)
     if command:
@@ -1282,7 +1386,7 @@ def magick(prompt_text):
     from djinn.core.sysadmin import ImageMagickPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating ImageMagick command..."):
         command = ImageMagickPlugin(engine).generate(prompt)
     if command:
@@ -1301,7 +1405,7 @@ def firewall(prompt_text):
     from djinn.core.security import FirewallPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating firewall command..."):
         command = FirewallPlugin(engine).generate(prompt)
     if command:
@@ -1318,7 +1422,7 @@ def ssl(prompt_text):
     from djinn.core.security import SSLPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating SSL command..."):
         command = SSLPlugin(engine).generate(prompt)
     if command:
@@ -1335,7 +1439,7 @@ def network(prompt_text):
     from djinn.core.security import NetworkPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating network command..."):
         command = NetworkPlugin(engine).generate(prompt)
     if command:
@@ -1352,7 +1456,7 @@ def process(prompt_text):
     from djinn.core.security import ProcessPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating process command..."):
         command = ProcessPlugin(engine).generate(prompt)
     if command:
@@ -1369,7 +1473,7 @@ def disk(prompt_text):
     from djinn.core.security import DiskPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating disk command..."):
         command = DiskPlugin(engine).generate(prompt)
     if command:
@@ -1386,7 +1490,7 @@ def user(prompt_text):
     from djinn.core.security import UserPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating user command..."):
         command = UserPlugin(engine).generate(prompt)
     if command:
@@ -1405,7 +1509,7 @@ def pytest(prompt_text):
     from djinn.core.devtools import PytestPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating pytest command..."):
         command = PytestPlugin(engine).generate(prompt)
     if command:
@@ -1422,7 +1526,7 @@ def lint(prompt_text):
     from djinn.core.devtools import LintPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating lint command..."):
         command = LintPlugin(engine).generate(prompt)
     if command:
@@ -1439,7 +1543,7 @@ def debug(prompt_text):
     from djinn.core.devtools import DebugPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating debug command..."):
         command = DebugPlugin(engine).generate(prompt)
     if command:
@@ -1456,7 +1560,7 @@ def bench(prompt_text):
     from djinn.core.devtools import BenchmarkPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating benchmark command..."):
         command = BenchmarkPlugin(engine).generate(prompt)
     if command:
@@ -1473,7 +1577,7 @@ def regex(prompt_text):
     from djinn.core.devtools import RegexPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating regex pattern..."):
         pattern = RegexPlugin(engine).generate(prompt)
     if pattern:
@@ -1490,7 +1594,7 @@ def awk(prompt_text):
     from djinn.core.devtools import AwkSedPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating awk/sed command..."):
         command = AwkSedPlugin(engine).generate(prompt)
     if command:
@@ -1507,7 +1611,7 @@ def jq(prompt_text):
     from djinn.core.devtools import JqPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating jq command..."):
         command = JqPlugin(engine).generate(prompt)
     if command:
@@ -1524,7 +1628,7 @@ def make(prompt_text):
     from djinn.core.devtools import MakePlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating make command..."):
         command = MakePlugin(engine).generate(prompt)
     if command:
@@ -1543,7 +1647,7 @@ def scrape(prompt_text):
     from djinn.core.webutils import ScrapingPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating scrape command..."):
         command = ScrapingPlugin(engine).generate(prompt)
     if command:
@@ -1560,7 +1664,7 @@ def base64cmd(prompt_text):
     from djinn.core.webutils import Base64Plugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating base64 command..."):
         command = Base64Plugin(engine).generate(prompt)
     if command:
@@ -1577,7 +1681,7 @@ def hash(prompt_text):
     from djinn.core.webutils import HashPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating hash command..."):
         command = HashPlugin(engine).generate(prompt)
     if command:
@@ -1594,7 +1698,7 @@ def date(prompt_text):
     from djinn.core.webutils import DateTimePlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating date command..."):
         command = DateTimePlugin(engine).generate(prompt)
     if command:
@@ -1611,7 +1715,7 @@ def archive(prompt_text):
     from djinn.core.webutils import ArchivePlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating archive command..."):
         command = ArchivePlugin(engine).generate(prompt)
     if command:
@@ -1628,7 +1732,7 @@ def rsync(prompt_text):
     from djinn.core.webutils import RsyncPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating rsync command..."):
         command = RsyncPlugin(engine).generate(prompt)
     if command:
@@ -1645,7 +1749,7 @@ def find(prompt_text):
     from djinn.core.webutils import FindPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating find command..."):
         command = FindPlugin(engine).generate(prompt)
     if command:
@@ -1662,7 +1766,7 @@ def xargs(prompt_text):
     from djinn.core.webutils import XargsPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating xargs command..."):
         command = XargsPlugin(engine).generate(prompt)
     if command:
@@ -1681,7 +1785,7 @@ def python(prompt_text):
     from djinn.core.languages import PythonPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Python command..."):
         command = PythonPlugin(engine).generate(prompt)
     if command:
@@ -1698,7 +1802,7 @@ def node(prompt_text):
     from djinn.core.languages import NodePlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Node.js command..."):
         command = NodePlugin(engine).generate(prompt)
     if command:
@@ -1715,7 +1819,7 @@ def rust(prompt_text):
     from djinn.core.languages import RustPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Rust command..."):
         command = RustPlugin(engine).generate(prompt)
     if command:
@@ -1732,7 +1836,7 @@ def go(prompt_text):
     from djinn.core.languages import GoPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Go command..."):
         command = GoPlugin(engine).generate(prompt)
     if command:
@@ -1749,7 +1853,7 @@ def java(prompt_text):
     from djinn.core.languages import JavaPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Java command..."):
         command = JavaPlugin(engine).generate(prompt)
     if command:
@@ -1766,7 +1870,7 @@ def cpp(prompt_text):
     from djinn.core.languages import CppPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating C++ command..."):
         command = CppPlugin(engine).generate(prompt)
     if command:
@@ -1785,7 +1889,7 @@ def oneliner(prompt_text):
     from djinn.core.ai import OneLinersPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating one-liner..."):
         command = OneLinersPlugin(engine).generate(prompt)
     if command:
@@ -1802,7 +1906,7 @@ def script(prompt_text):
     from djinn.core.ai import ScriptPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating shell script..."):
         script_code = ScriptPlugin(engine).generate(prompt)
     if script_code:
@@ -1822,7 +1926,7 @@ def translate(code, from_shell, to_shell):
     from djinn.core.ai import TranslatePlugin
     command = " ".join(code)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     
     console.print(f"\n[prompt]> Translate {from_shell} → {to_shell}:[/prompt] {command}")
     
@@ -1843,7 +1947,7 @@ def codegen(prompt_text, lang):
     from djinn.core.ai import CodeGenPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     
     with spinner.status(f"Generating {lang} code..."):
         code = CodeGenPlugin(engine).generate(prompt, lang)
@@ -1861,7 +1965,7 @@ def chat():
     from djinn.core.ai import ConversationPlugin
     
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     conv = ConversationPlugin(engine)
     
     console.print("\n[highlight]Chat Mode[/highlight] - type 'exit' to quit\n")
@@ -1892,7 +1996,7 @@ def latex(prompt_text):
     from djinn.core.specialized import LatexPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating LaTeX..."):
         command = LatexPlugin(engine).generate(prompt)
     if command:
@@ -1909,7 +2013,7 @@ def sql(prompt_text):
     from djinn.core.specialized import SQLPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating SQL..."):
         command = SQLPlugin(engine).generate(prompt)
     if command:
@@ -1926,7 +2030,7 @@ def graphql(prompt_text):
     from djinn.core.specialized import GraphQLPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating GraphQL..."):
         command = GraphQLPlugin(engine).generate(prompt)
     if command:
@@ -1943,7 +2047,7 @@ def ansible(prompt_text):
     from djinn.core.specialized import AnsiblePlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Ansible..."):
         command = AnsiblePlugin(engine).generate(prompt)
     if command:
@@ -1960,7 +2064,7 @@ def vagrant(prompt_text):
     from djinn.core.specialized import VagrantPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Vagrant..."):
         command = VagrantPlugin(engine).generate(prompt)
     if command:
@@ -1977,7 +2081,7 @@ def grpc(prompt_text):
     from djinn.core.specialized import GrpcPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating gRPC..."):
         command = GrpcPlugin(engine).generate(prompt)
     if command:
@@ -1996,7 +2100,7 @@ def react(prompt_text):
     from djinn.core.mobile import ReactPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating React..."):
         command = ReactPlugin(engine).generate(prompt)
     if command:
@@ -2013,7 +2117,7 @@ def flutter(prompt_text):
     from djinn.core.mobile import FlutterPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Flutter..."):
         command = FlutterPlugin(engine).generate(prompt)
     if command:
@@ -2030,7 +2134,7 @@ def android(prompt_text):
     from djinn.core.mobile import AndroidPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating ADB..."):
         command = AndroidPlugin(engine).generate(prompt)
     if command:
@@ -2047,7 +2151,7 @@ def ios(prompt_text):
     from djinn.core.mobile import IOSPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating iOS..."):
         command = IOSPlugin(engine).generate(prompt)
     if command:
@@ -2066,7 +2170,7 @@ def pandas(prompt_text):
     from djinn.core.dataml import PandasPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Pandas code..."):
         command = PandasPlugin(engine).generate(prompt)
     if command:
@@ -2083,7 +2187,7 @@ def spark(prompt_text):
     from djinn.core.dataml import SparkPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Spark..."):
         command = SparkPlugin(engine).generate(prompt)
     if command:
@@ -2100,7 +2204,7 @@ def jupyter(prompt_text):
     from djinn.core.dataml import JupyterPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating Jupyter..."):
         command = JupyterPlugin(engine).generate(prompt)
     if command:
@@ -2119,7 +2223,7 @@ def todo(prompt_text):
     from djinn.core.productivity import TodoPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating TODO..."):
         command = TodoPlugin(engine).generate(prompt)
     if command:
@@ -2136,7 +2240,7 @@ def changelog(prompt_text):
     from djinn.core.productivity import ChangelogPlugin
     prompt = " ".join(prompt_text)
     config = load_config()
-    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"))
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
     with spinner.status("Generating changelog..."):
         entry = ChangelogPlugin(engine).generate(prompt)
     if entry:
