@@ -7,17 +7,16 @@
     <title>Configuration - DJINN</title>
     <link rel="stylesheet" href="styles.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
 
-    <header class="container">
-        <div class="nav-container">
+    <header>
+        <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-small">
-                DJINN
+                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
             </a>
             <nav>
                 <a href="installation.html">Installation</a>
@@ -29,59 +28,35 @@
     </header>
 
     <main class="container">
-        <h1>Configuration</h1>
-        <p>Customize DJINN's behavior, themes, and AI backend.</p>
+        <div style="padding-top: 60px;">
+            <h1>Configuration</h1>
+            <p>Customize DJINN to fit your workflow.</p>
 
-        <h2>LLM Backend</h2>
-        <p>DJINN supports multiple backends. Switch between them instantly.</p>
-        <pre><code>djinn config --backend ollama
-djinn config --backend openai
-djinn config --backend lmstudio</code></pre>
+            <section style="margin-top: 4rem;">
+                <h2>LLM Settings</h2>
+                <p>Change your backend and model with one command.</p>
+                <pre><code>djinn config --backend ollama
+djinn config --model llama3</code></pre>
+            </section>
 
-        <h2>Choosing Models</h2>
-        <p>Specify which model fits your needs (speed vs precision):</p>
-        <pre><code>djinn config --model llama3     # Fast, good for daily use
-djinn config --model gpt-4      # High precision</code></pre>
+            <section style="margin-top: 4rem;">
+                <h2>Themes</h2>
+                <p>Choose from our beautiful terminal themes.</p>
+                <pre><code>djinn theme hacker
+djinn theme minimal</code></pre>
+            </section>
 
-        <h2>Themes</h2>
-        <p>DJINN comes with 5 built-in themes:</p>
-        <table>
-            <tr>
-                <th>Theme</th>
-                <th>Description</th>
-            </tr>
-            <tr>
-                <td><code>default</code></td>
-                <td>Classic green terminal style</td>
-            </tr>
-            <tr>
-                <td><code>hacker</code></td>
-                <td>Matrix-inspired aesthetic</td>
-            </tr>
-            <tr>
-                <td><code>ocean</code></td>
-                <td>Calm blue color palette</td>
-            </tr>
-            <tr>
-                <td><code>purple</code></td>
-                <td>Vibrant synthwave style</td>
-            </tr>
-            <tr>
-                <td><code>minimal</code></td>
-                <td>Clean monochrome (High contrast)</td>
-            </tr>
-        </table>
-        <pre><code>djinn theme purple</code></pre>
-
-        <h2>View Configuration</h2>
-        <p>To see your current settings:</p>
-        <pre><code>djinn config --show</code></pre>
-
+            <section style="margin-top: 4rem; margin-bottom: 6rem;">
+                <h2>API Keys</h2>
+                <p>If using OpenAI or other cloud providers, set your API key environment variable.</p>
+                <pre><code>export OPENAI_API_KEY="your-key-here"</code></pre>
+            </section>
+        </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>Managed by <a href="https://boubli.tech">Youssef Boubli</a>. Open source under MIT License.</p>
+            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
         </div>
     </footer>
 

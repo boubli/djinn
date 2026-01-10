@@ -5,20 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DJINN - The AI-Powered CLI</title>
-    <meta name="description" content="Simpler than typical CLIs. Smarter than typical aliases.">
+    <meta name="description" content="Convert natural language to shell commands with AI.">
     <link rel="stylesheet" href="styles.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
 
-    <header class="container">
-        <div class="nav-container">
+    <header>
+        <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-small">
-                DJINN
+                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
             </a>
             <nav>
                 <a href="installation.html">Installation</a>
@@ -27,81 +26,57 @@
                 <a href="https://github.com/boubli/djinn">GitHub</a>
             </nav>
         </div>
-
-        <!-- Main Hero Content -->
-        <div class="hero-section">
-            <img src="assets/djinn_logo.png" alt="DJINN" class="hero-logo">
-            <h1>DJINN</h1>
-            <h2 class="subtitle">The AI-powered CLI for everyone.</h2>
-
-            <div class="install-box">
-                <span style="color: #6b7280; user-select: none;">$</span>
-                <span class="install-cmd">pip install djinn-cli</span>
-                <button class="copy-btn" title="Copy to clipboard">📋</button>
-            </div>
-
-            <div style="margin-top: 40px;">
-                <a href="https://github.com/boubli/djinn"
-                    style="display:inline-block; background:#f9fafb; color:#000; padding:12px 28px; text-decoration:none; border-radius:100px; font-weight:700; transition: all 0.2s;">GitHub</a>
-                <a href="commands.html"
-                    style="display:inline-block; background:rgba(255,255,255,0.1); color:#fff; padding:12px 28px; text-decoration:none; border-radius:100px; font-weight:600; margin-left:12px; border:1px solid rgba(255,255,255,0.2); transition: all 0.2s;">Documentation</a>
-            </div>
-        </div>
     </header>
 
-    <main class="container">
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>DJINN</h1>
+                <p class="subtitle">The ultimate AI-powered CLI tool that transforms natural language into precise shell
+                    commands. Featuring 87+ specialized plugins.</p>
 
-        <div class="demo-terminal">
-            <div>
-                <span class="prompt">~</span> djinn "find all heavy files"
-            </div>
-            <div style="margin-top:8px">
-                <span class="success">✓</span> find . -type f -size +100M
-            </div>
-            <div style="margin-top:8px" class="comment">
-                # Copied to clipboard!
-            </div>
-            <br>
-            <div>
-                <span class="prompt">~</span> djinn aws "list buckets"
-            </div>
-            <div style="margin-top:8px">
-                <span class="success">✓</span> aws s3 ls
-            </div>
-        </div>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="installation.html" class="btn btn-primary">Get Started</a>
+                    <a href="https://github.com/boubli/djinn" class="btn btn-secondary">View on GitHub</a>
+                </div>
 
-        <div class="grid">
-            <div class="feature">
-                <h3>⚡ What does it do?</h3>
-                <p>Converts your natural language descriptions into precise shell commands. No need to memorize
-                    thousands of flags for git, docker, kubectl, or ffmpeg.</p>
+                <div class="terminal-box">
+                    <div>
+                        <span class="terminal-prompt">$</span> djinn git "undo last commit"
+                    </div>
+                    <div style="margin-top: 10px; color: #fff;">
+                        ✓ git reset --soft HEAD~1
+                    </div>
+                    <div style="margin-top: 10px; opacity: 0.5;">
+                        # Copied to clipboard!
+                    </div>
+                </div>
             </div>
-            <div class="feature">
-                <h3>🔮 How does it work?</h3>
-                <p>Uses local LLMs (Ollama, LM Studio) or cloud APIs (OpenAI) to understand context. It's context-aware,
-                    knowing your OS, shell, and file structure.</p>
-            </div>
-            <div class="feature">
-                <h3>🚀 87+ Commands</h3>
-                <p>Specialized plugins for everything: DevOps, Databases, Cloud, Security, Data Science, and Mobile
-                    development.</p>
-            </div>
-        </div>
+        </section>
 
-        <div style="text-align: center; margin: 40px 0;">
-            <a href="https://github.com/boubli/djinn"
-                style="display:inline-block; background:#24292f; color:white; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:600;">View
-                on GitHub</a>
-            <a href="commands.html"
-                style="display:inline-block; background:var(--code-bg); color:var(--text-main); padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:600; margin-left:12px; border:1px solid var(--border);">Documentation</a>
-        </div>
-
+        <section class="container">
+            <div class="grid">
+                <div class="card">
+                    <h3>Built for Developers</h3>
+                    <p>Stop searching StackOverflow. Just type what you want to do in plain English and let DJINN handle
+                        the rest.</p>
+                </div>
+                <div class="card">
+                    <h3>87+ Plugins</h3>
+                    <p>Deep integration with AWS, Docker, Kubernetes, Git, Databases, and more. Specialized prompts for
+                        every tool.</p>
+                </div>
+                <div class="card">
+                    <h3>Local First</h3>
+                    <p>Works with Ollama and LM Studio for 100% private, local LLM execution. No API keys required.</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
         <div class="container">
-            <p>DJINN is maintained by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
-            <p>Released under the MIT License.</p>
+            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
         </div>
     </footer>
 

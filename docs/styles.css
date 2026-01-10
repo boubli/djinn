@@ -1,50 +1,85 @@
-/* DJINN Pro Theme - Dark Mode First */
+/* 
+   DJINN PRO DOCUMENTATION THEME
+   Inspired by modern tech leaders (Linear, Vercel, Stripe)
+   Focus: Precision, Depth, and Readability
+*/
+
 :root {
-    --bg: #030712;
-    /* Very dark blue/black */
-    --bg-secondary: #111827;
-    /* Slightly lighter for cards */
-    --text-main: #f9fafb;
-    --text-muted: #9ca3af;
-    --primary: #8b5cf6;
-    /* Violet/Purple */
-    --primary-glow: rgba(139, 92, 246, 0.5);
-    --accent: #10b981;
-    /* Emerald Green for success/code */
-    --border: #1f2937;
-    --code-bg: #1f2937;
-    --nav-height: 70px;
+    /* Color Palette */
+    --bg: #000000;
+    --accents-1: #111111;
+    --accents-2: #333333;
+    --accents-3: #444444;
+    --accents-4: #666666;
+    --accents-5: #888888;
+    --accents-6: #999999;
+    --accents-7: #eaeaea;
+    --accents-8: #fafafa;
+
+    --primary: #ffffff;
+    --secondary: #888888;
+
+    --success: #0070f3;
+    /* Vercel Blue */
+    --success-light: #3291ff;
+
+    --border: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(255, 255, 255, 0.2);
+
+    --nav-height: 64px;
+    --container-width: 1000px;
+
+    /* Effects */
+    --shadow-small: 0 5px 10px rgba(0, 0, 0, 0.12);
+    --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background-color: var(--bg);
-    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--primary);
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    background-image:
-        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
-    background-attachment: fixed;
 }
 
+/* Typography */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    margin-top: 0;
+    letter-spacing: -0.02em;
+}
+
+p {
+    color: var(--secondary);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Layout */
 .container {
-    max-width: 1000px;
+    max-width: var(--container-width);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 2rem;
 }
 
-/* Navbar */
+/* Navigation */
 header {
+    height: var(--nav-height);
     border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    background: rgba(3, 7, 18, 0.8);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: saturate(180%) blur(5px);
     position: sticky;
     top: 0;
-    z-index: 100;
-    padding: 0;
-    height: var(--nav-height);
+    z-index: 1000;
     display: flex;
     align-items: center;
 }
@@ -60,183 +95,174 @@ header {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: var(--text-main);
-    font-weight: 800;
-    font-size: 1.5rem;
-    gap: 12px;
-    letter-spacing: -0.5px;
+    transition: opacity 0.2s;
 }
 
-.logo-small {
-    height: 36px;
+.logo-link:hover {
+    opacity: 0.7;
+}
+
+.logo-img {
+    height: 32px;
     width: auto;
-    /* Ensure logo stays as-is (white) */
-    filter: drop-shadow(0 0 8px var(--primary-glow));
+}
+
+nav {
+    display: flex;
+    gap: 2rem;
 }
 
 nav a {
-    color: var(--text-muted);
     text-decoration: none;
-    margin-left: 32px;
-    font-size: 0.95rem;
+    color: var(--secondary);
+    font-size: 0.875rem;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
 }
 
 nav a:hover,
 nav a.active {
-    color: var(--text-main);
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    color: var(--primary);
 }
 
-/* Hero Section (only on index) */
-.hero-section {
-    text-align: center;
+/* Hero Section */
+.hero {
     padding: 100px 0 60px;
+    text-align: center;
 }
 
-.hero-logo {
-    height: 140px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 20px var(--primary-glow));
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-h1 {
-    font-size: 4rem;
+.hero h1 {
+    font-size: 4.5rem;
     font-weight: 800;
-    margin: 0;
-    background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+    margin-bottom: 1rem;
+    background: linear-gradient(to bottom, #fff 0%, #888 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -2px;
 }
 
-h2.subtitle {
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    margin-top: 16px;
-    margin-bottom: 48px;
+.hero .subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-/* Install Box */
-.install-box {
-    background: rgba(31, 41, 55, 0.5);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem;
+/* Buttons */
+.btn {
     display: inline-flex;
     align-items: center;
-    gap: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
+    justify-content: center;
+    padding: 0 1.5rem;
+    height: 48px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
-.install-cmd {
-    color: var(--accent);
+.btn-primary {
+    background: var(--primary);
+    color: var(--bg);
 }
 
-.copy-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    opacity: 0.7;
-    transition: opacity 0.2s;
+.btn-primary:hover {
+    background: #ccc;
 }
 
-.copy-btn:hover {
-    opacity: 1;
-    transform: scale(1.1);
+.btn-secondary {
+    background: var(--bg);
+    color: var(--primary);
+    border: 1px solid var(--border);
 }
 
-/* Content Styling */
-main {
-    padding: 60px 0 100px;
+.btn-secondary:hover {
+    border-color: var(--primary);
 }
 
-h2 {
-    font-size: 2rem;
-    margin-top: 4rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-main);
-}
-
+/* Code & Terminal */
 code {
     font-family: 'JetBrains Mono', monospace;
-    background: rgba(139, 92, 246, 0.1);
-    /* Subtle purple tint */
-    color: #e9d5ff;
-    padding: 4px 8px;
-    border-radius: 6px;
+    background: var(--accents-1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
     font-size: 0.9em;
+    border: 1px solid var(--border);
 }
 
 pre {
-    background: #0f1219;
-    padding: 24px;
-    border-radius: 12px;
+    background: var(--bg);
     border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 8px;
     overflow-x: auto;
-    margin: 24px 0;
-    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin: 2rem 0;
 }
 
-/* Cards / Grid */
-.category {
-    background: var(--bg-secondary);
+.terminal-box {
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 32px;
-}
-
-table {
-    width: 100%;
-    margin-top: 16px;
-}
-
-td {
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-th {
+    border-radius: 8px;
+    padding: 1.5rem;
     text-align: left;
-    color: var(--text-muted);
-    font-weight: 500;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    margin: 3rem auto;
+    max-width: 700px;
+    box-shadow: var(--shadow-medium);
+}
+
+.terminal-prompt {
+    color: var(--success);
+}
+
+/* Grid & Cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 60px 0;
+}
+
+.card {
+    background: var(--accents-1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: border-color 0.2s;
+}
+
+.card:hover {
+    border-color: var(--border-hover);
+}
+
+.card h3 {
+    margin-bottom: 1rem;
+    color: var(--primary);
 }
 
 /* Footer */
 footer {
     border-top: 1px solid var(--border);
-    padding: 60px 0;
+    padding: 4rem 0;
+    color: var(--secondary);
+    font-size: 0.875rem;
     text-align: center;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    background: var(--bg-secondary);
 }
 
 footer a {
-    color: var(--text-main);
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    nav {
+        display: none;
+    }
 }

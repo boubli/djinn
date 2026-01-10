@@ -7,17 +7,16 @@
     <title>Installation - DJINN</title>
     <link rel="stylesheet" href="styles.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 </head>
 
 <body>
 
-    <header class="container">
-        <div class="nav-container">
+    <header>
+        <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-small">
-                DJINN
+                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
             </a>
             <nav>
                 <a href="installation.html" class="active">Installation</a>
@@ -29,39 +28,39 @@
     </header>
 
     <main class="container">
-        <h1>Installation</h1>
-        <p>Get started with DJINN on Windows, macOS, or Linux.</p>
+        <div style="padding-top: 60px;">
+            <h1>Installation</h1>
+            <p>Follow these steps to get DJINN running on your machine.</p>
 
-        <h2>Prerequisites</h2>
-        <ul>
-            <li>Python 3.8 or higher</li>
-            <li>Access to an LLM (Ollama running locally, or an API key for OpenAI/DeepSeek)</li>
-        </ul>
-
-        <h2>Install via pip</h2>
-        <p>The recommended way to install is via PyPI (coming soon) or directly from source:</p>
-        <pre><code>git clone https://github.com/boubli/djinn.git
+            <section style="margin-top: 4rem;">
+                <h2>Quick Start</h2>
+                <p>Install the DJINN CLI directly from our repository.</p>
+                <pre><code>git clone https://github.com/boubli/djinn.git
 cd djinn
 pip install -e .</code></pre>
+            </section>
 
-        <h2>Verify Installation</h2>
-        <p>Run the help command to check if everything is working:</p>
-        <pre><code>djinn --help</code></pre>
+            <section style="margin-top: 4rem;">
+                <h2>Requirements</h2>
+                <ul>
+                    <li>Python 3.8+</li>
+                    <li>Pip</li>
+                    <li>Ollama (recommended for local LLM)</li>
+                </ul>
+            </section>
 
-        <h2>Setting up the Backend</h2>
-        <p>By default, DJINN may look for a local Ollama instance. To configure it:</p>
-        <pre><code># For Ollama (Local)
-djinn config --backend ollama --model llama3
-
-# For OpenAI (Cloud)
-export OPENAI_API_KEY="sk-..."
-djinn config --backend openai --model gpt-4o</code></pre>
-
+            <section style="margin-top: 4rem; margin-bottom: 6rem;">
+                <h2>Next Steps</h2>
+                <p>Once installed, verify it works by running:</p>
+                <pre><code>djinn --help</code></pre>
+                <p>Then, head over to <a href="configuration.html">Configuration</a> to set up your LLM backend.</p>
+            </section>
+        </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>Managed by <a href="https://boubli.tech">Youssef Boubli</a>. Open source under MIT License.</p>
+            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
         </div>
     </footer>
 

@@ -7,17 +7,44 @@
     <title>Command Reference - DJINN</title>
     <link rel="stylesheet" href="styles.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.875rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--secondary);
+        }
+
+        tr:hover td {
+            color: var(--primary);
+        }
+    </style>
 </head>
 
 <body>
 
-    <header class="container">
-        <div class="nav-container">
+    <header>
+        <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-small">
-                DJINN
+                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
             </a>
             <nav>
                 <a href="installation.html">Installation</a>
@@ -29,157 +56,69 @@
     </header>
 
     <main class="container">
-        <h1>Command Reference</h1>
-        <p>DJINN features 87+ specialized commands categorized by function. Use them with natural language.</p>
+        <div style="padding-top: 60px;">
+            <h1>Command Reference</h1>
+            <p>Exploration of the 87+ specialized commands across various categories.</p>
 
-        <!-- Categories -->
-        <div class="category">
-            <h2>🔧 DevOps</h2>
-            <table>
-                <tr>
-                    <th>Command Type</th>
-                    <th>Example Usage</th>
-                </tr>
-                <tr>
-                    <td><code>git</code></td>
-                    <td>djinn "undo last commit"</td>
-                </tr>
-                <tr>
-                    <td><code>docker</code></td>
-                    <td>djinn "remove all stopped containers"</td>
-                </tr>
-                <tr>
-                    <td><code>k8s</code></td>
-                    <td>djinn "get pods in crashloop"</td>
-                </tr>
-                <tr>
-                    <td><code>terraform</code></td>
-                    <td>djinn "apply auto approve"</td>
-                </tr>
-                <tr>
-                    <td><code>helm</code></td>
-                    <td>djinn "list releases"</td>
-                </tr>
-                <tr>
-                    <td><code>ansible</code></td>
-                    <td>djinn "run playbook deploy.yml"</td>
-                </tr>
-                <tr>
-                    <td><code>vagrant</code></td>
-                    <td>djinn "up"</td>
-                </tr>
-            </table>
+            <section style="margin-top: 4rem;">
+                <h2>DevOps</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Git</td>
+                            <td><code>djinn git "revert last commit but keep changes"</code></td>
+                        </tr>
+                        <tr>
+                            <td>Docker</td>
+                            <td><code>djinn docker "list all images with size"</code></td>
+                        </tr>
+                        <tr>
+                            <td>Kubernetes</td>
+                            <td><code>djinn k8s "scale deployment web to 3 replicas"</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section style="margin-top: 4rem;">
+                <h2>Cloud</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AWS</td>
+                            <td><code>djinn aws "list all s3 buckets"</code></td>
+                        </tr>
+                        <tr>
+                            <td>GCP</td>
+                            <td><code>djinn gcp "create a new compute engine instance"</code></td>
+                        </tr>
+                        <tr>
+                            <td>Azure</td>
+                            <td><code>djinn azure "list all resource groups"</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- More sections can be added as needed -->
         </div>
-
-        <div class="category">
-            <h2>☁️ Cloud</h2>
-            <table>
-                <tr>
-                    <th>Command Type</th>
-                    <th>Example Usage</th>
-                </tr>
-                <tr>
-                    <td><code>aws</code></td>
-                    <td>djinn "list s3 buckets"</td>
-                </tr>
-                <tr>
-                    <td><code>gcp</code></td>
-                    <td>djinn "list instances"</td>
-                </tr>
-                <tr>
-                    <td><code>azure</code></td>
-                    <td>djinn "create resource group"</td>
-                </tr>
-                <tr>
-                    <td><code>api</code></td>
-                    <td>djinn "curl post request with json"</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="category">
-            <h2>🗄️ Databases</h2>
-            <table>
-                <tr>
-                    <th>Command Type</th>
-                    <th>Example Usage</th>
-                </tr>
-                <tr>
-                    <td><code>mysql</code></td>
-                    <td>djinn "dump database production"</td>
-                </tr>
-                <tr>
-                    <td><code>postgres</code></td>
-                    <td>djinn "restore backup from file"</td>
-                </tr>
-                <tr>
-                    <td><code>redis</code></td>
-                    <td>djinn "flush all keys"</td>
-                </tr>
-                <tr>
-                    <td><code>mongo</code></td>
-                    <td>djinn "find users where active is true"</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="category">
-            <h2>🛠️ Development Tools</h2>
-            <table>
-                <tr>
-                    <th>Command Type</th>
-                    <th>Example Usage</th>
-                </tr>
-                <tr>
-                    <td><code>npm</code></td>
-                    <td>djinn "install dev dependencies"</td>
-                </tr>
-                <tr>
-                    <td><code>pip</code></td>
-                    <td>djinn "upgrade all packages"</td>
-                </tr>
-                <tr>
-                    <td><code>pytest</code></td>
-                    <td>djinn "run tests matching 'api'"</td>
-                </tr>
-                <tr>
-                    <td><code>ffmpeg</code></td>
-                    <td>djinn "convert video.mov to mp4"</td>
-                </tr>
-                <tr>
-                    <td><code>magick</code></td>
-                    <td>djinn "resize image to 50%"</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="category">
-            <h2>🧠 AI Utilities</h2>
-            <table>
-                <tr>
-                    <th>Command Type</th>
-                    <th>Example Usage</th>
-                </tr>
-                <tr>
-                    <td><code>chat</code></td>
-                    <td>djinn chat (Starts interactive sessions)</td>
-                </tr>
-                <tr>
-                    <td><code>explain</code></td>
-                    <td>djinn explain "tar -xzvf file.tar.gz"</td>
-                </tr>
-                <tr>
-                    <td><code>translate</code></td>
-                    <td>djinn translate "ls -la" --to powershell</td>
-                </tr>
-            </table>
-        </div>
-
     </main>
 
     <footer>
         <div class="container">
-            <p>Managed by <a href="https://boubli.tech">Youssef Boubli</a>. Open source under MIT License.</p>
+            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
         </div>
     </footer>
 
