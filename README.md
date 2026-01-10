@@ -24,37 +24,46 @@
 ---
 
 
+# ⚡ DJINN
 
-## ✨ Features
+**The AI-Powered CLI that converts natural language into precise shell commands.**
 
-- 🤖 **AI-Powered**: Understands natural language prompts
-- ⚡ **87 Commands**: Specialized plugins for every tool
-- 🔄 **Multi-LLM**: Ollama, LM Studio, OpenAI
-- 📋 **Auto-Copy**: Commands copied to clipboard
-- 🎨 **5 Themes**: Customize your terminal
-- 🔒 **Danger Detection**: Warns before destructive commands
-- 💬 **Chat Mode**: Interactive AI conversation
+[![PyPI version](https://img.shields.io/pypi/v/djinn-cli.svg)](https://pypi.org/project/djinn-cli/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 Quick Start
+DJINN is a high-performance terminal assistant designed to bridge the gap between human thought and technical execution. With 87+ specialized plugins, it masters everything from cloud infrastructure to local system administration.
 
+---
+
+### 🚀 Quick Start
+
+Install DJINN directly from PyPI:
 ```bash
 pip install djinn-cli
 ```
 
-## 📖 Documentation
+Generate your first command:
+```bash
+djinn "list all docker containers sorted by size"
+```
 
-For full documentation, usage examples, and the complete command reference, visit our website:
+---
+
+### ✨ Key Features
+
+- **87+ Specialized Plugins**: Custom-tailored prompts for AWS, Docker, K8s, Git, Databases, and more.
+- **Deep Integration**: Context-aware suggestions based on your current directory and environment.
+- **Privacy First**: Seamlessly works with **Ollama** and **LM Studio** for 100% local, private AI.
+- **Power User Tools**: Explain mode, alias management, and shell translation (Bash ↔ PowerShell).
+
+---
+
+### 📖 Documentation
+
+For detailed installation guides, command references, and configuration options, visit our official site:
+
 👉 **[djinn.boubli.tech](https://boubli.github.io/djinn/)**
 
-- **[Installation Guide](https://boubli.github.io/djinn/installation.html)**
-- **[Command Reference](https://boubli.github.io/djinn/commands.html)**
-- **[Configuration](https://boubli.github.io/djinn/configuration.html)**
-
-## ✨ Features
-
-- 🤖 **AI-Powered**: Natural language to shell commands
-- ⚡ **87+ Commands**: DevOps, Cloud, Databases, and more
-- 🔄 **Multi-LLM**: Ollama, LM Studio, OpenAI
 - 🎨 **Themable**: 5 beautiful terminal themes
 
 ## 🤝 Contributing
