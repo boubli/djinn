@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "djinn-cli"
+version = "1.0.0"
+description = "⚡ DJINN - AI-powered CLI that converts natural language to shell commands. 87 specialized commands for DevOps, Cloud, Databases, and more."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Youssef Boubli", email = "bbb.vloger@gmail.com"}
+]
+keywords = ["cli", "terminal", "ai", "llm", "shell", "commands", "ollama", "devops", "automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "requests>=2.28",
+    "openai>=1.0",
+    "pyperclip>=1.8",
+    "prompt-toolkit>=3.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "black", "ruff"]
+
+[project.scripts]
+djinn = "djinn.cli:main"
+
+[project.urls]
+Homepage = "https://boubli.tech"
+Repository = "https://github.com/boubli/djinn"
+Issues = "https://github.com/boubli/djinn/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["djinn*"]

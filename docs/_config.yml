@@ -1,0 +1,10 @@
+theme: jekyll-theme-slate
+title: DJINN
+description: Terminal Sorcery at Your Command
+show_downloads: true
+google_analytics:
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true

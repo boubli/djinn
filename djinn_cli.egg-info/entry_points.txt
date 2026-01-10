@@ -1,0 +1,2 @@
+[console_scripts]
+djinn = djinn.cli:main

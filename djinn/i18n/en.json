@@ -1,0 +1,15 @@
+{
+  "welcome": "Welcome to Djinn!",
+  "generating": "Summoning command...",
+  "success": "Command generated",
+  "copied": "Copied to clipboard!",
+  "error": "An error occurred",
+  "no_backend": "No LLM backend available",
+  "usage_hint": "Type a natural language command description",
+  "interactive_hint": "Type 'exit' or 'quit' to leave interactive mode",
+  "history_empty": "No command history yet",
+  "favorite_added": "Added to favorites",
+  "favorite_removed": "Removed from favorites",
+  "config_updated": "Configuration updated",
+  "paste_hint": "Paste with Ctrl+V"
+}

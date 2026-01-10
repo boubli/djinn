@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJINN - Terminal Sorcery at Your Command</title>
+    <meta name="description"
+        content="AI-powered CLI tool that converts natural language to shell commands. 87 specialized commands for DevOps, Cloud, Databases, and more.">
+    <meta name="author" content="Youssef Boubli">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-code: #1a1a1a;
+            --text: #e5e5e5;
+            --text-muted: #737373;
+            --border: #262626;
+            --accent: #22C55E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 24px;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #0d1a0f 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero .description {
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .badges {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge.primary {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Terminal Demo */
+        .terminal {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 3rem auto;
+            max-width: 700px;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-btn.red {
+            background: #ef4444;
+        }
+
+        .terminal-btn.yellow {
+            background: #eab308;
+        }
+
+        .terminal-btn.green {
+            background: #22c55e;
+        }
+
+        .terminal-line {
+            margin: 8px 0;
+        }
+
+        .terminal-prompt {
+            color: var(--primary);
+        }
+
+        .terminal-output {
+            color: var(--text-muted);
+        }
+
+        .terminal-success {
+            color: var(--accent);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 4rem;
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* Commands Section */
+        .commands {
+            padding: 100px 0;
+            background: var(--bg-card);
+        }
+
+        .command-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .command-category {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .command-category h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .command-list {
+            list-style: none;
+        }
+
+        .command-list li {
+            padding: 6px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .command-list code {
+            color: var(--accent);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 60px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        /* Developer Section */
+        .developer {
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .developer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .developer-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .developer-card .title {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .developer-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .social-link {
+            padding: 12px 24px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.125rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="logo">⚡</div>
+        <h1>DJINN</h1>
+        <p class="tagline">Terminal Sorcery at Your Command</p>
+        <p class="description">
+            AI-powered CLI that converts natural language to shell commands.
+            87 specialized commands for DevOps, Cloud, Databases, and more.
+        </p>
+
+        <div class="badges">
+            <span class="badge primary">v1.0.0</span>
+            <span class="badge">Python 3.8+</span>
+            <span class="badge">87 Commands</span>
+            <span class="badge">MIT License</span>
+        </div>
+
+        <div class="cta-buttons">
+            <a href="https://github.com/boubli/djinn" class="btn btn-primary">
+                ⭐ Get Started
+            </a>
+            <a href="#commands" class="btn btn-secondary">
+                📖 View Commands
+            </a>
+        </div>
+
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="terminal-btn red"></span>
+                <span class="terminal-btn yellow"></span>
+                <span class="terminal-btn green"></span>
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> djinn git "undo last commit"
+            </div>
+            <div class="terminal-line terminal-success">
+                ✓ git reset --soft HEAD~1
+            </div>
+            <div class="terminal-line terminal-output">
+                📋 Copied to clipboard!
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats container">
+        <div class="stat">
+            <div class="stat-number">87</div>
+            <div class="stat-label">Commands</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">14</div>
+            <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">3</div>
+            <div class="stat-label">LLM Backends</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Themes</div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features container">
+        <h2 class="section-title">Features</h2>
+        <p class="section-subtitle">Everything you need for terminal productivity</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered</h3>
+                <p>Natural language understanding with local or cloud LLMs</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>87 Commands</h3>
+                <p>Specialized plugins for Git, Docker, K8s, AWS, and more</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>Multi-LLM</h3>
+                <p>Works with Ollama, LM Studio, and OpenAI</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Danger Detection</h3>
+                <p>Warns before executing destructive commands</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Chat Mode</h3>
+                <p>Interactive AI conversation for complex tasks</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Themes</h3>
+                <p>5 beautiful themes to customize your terminal</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands -->
+    <section class="commands" id="commands">
+        <div class="container">
+            <h2 class="section-title">87 Commands</h2>
+            <p class="section-subtitle">Specialized plugins for every tool</p>
+
+            <div class="command-categories">
+                <div class="command-category">
+                    <h4>🔧 DevOps</h4>
+                    <ul class="command-list">
+                        <li><code>git</code> <code>docker</code> <code>k8s</code></li>
+                        <li><code>terraform</code> <code>helm</code> <code>ansible</code></li>
+                    </ul>
+                </div>
+                <div class="command-category">
+                    <h4>☁️ Cloud</h4>
+                    <ul class="command-list">
+                        <li><code>aws</code> <code>gcp</code> <code>azure</code></li>
+                        <li><code>ssh</code> <code>api</code></li>
+                    </ul>
+                </div>
+                <div class="command-category">
+                    <h4>🗄️ Databases</h4>
+                    <ul class="command-list">
+                        <li><code>mysql</code> <code>postgres</code> <code>redis</code></li>
+                        <li><code>mongo</code> <code>sql</code> <code>graphql</code></li>
+                    </ul>
+                </div>
+                <div class="command-category">
+                    <h4>💻 Languages</h4>
+                    <ul class="command-list">
+                        <li><code>python</code> <code>node</code> <code>rust</code></li>
+                        <li><code>go</code> <code>java</code> <code>cpp</code></li>
+                    </ul>
+                </div>
+                <div class="command-category">
+                    <h4>🧠 AI</h4>
+                    <ul class="command-list">
+                        <li><code>chat</code> <code>translate</code> <code>codegen</code></li>
+                        <li><code>script</code> <code>oneliner</code></li>
+                    </ul>
+                </div>
+                <div class="command-category">
+                    <h4>📝 Productivity</h4>
+                    <ul class="command-list">
+                        <li><code>commit</code> <code>changelog</code> <code>readme</code></li>
+                        <li><code>docs</code> <code>todo</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developer -->
+    <section class="developer container">
+        <h2 class="section-title">Developer</h2>
+        <div class="developer-card">
+            <h3>Youssef Boubli</h3>
+            <p class="title">Creative Technologist: AI, Web & Product Design</p>
+            <p>
+                Multidisciplinary engineer with 7+ years of full-stack development.
+                Creator of HIBA-7B and other AI projects. Building the future with empathetic AI.
+            </p>
+            <div class="social-links">
+                <a href="https://boubli.tech" class="social-link">🌐 Website</a>
+                <a href="https://github.com/boubli" class="social-link">GitHub</a>
+                <a href="https://huggingface.co/TRADMSS" class="social-link">🤗 HuggingFace</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>MIT License © 2026 <a href="https://boubli.tech">Youssef Boubli</a></p>
+            <p style="margin-top: 8px;">Built with ⚡ power</p>
+        </div>
+    </footer>
+</body>
+
+</html>
