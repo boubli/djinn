@@ -1,12 +1,19 @@
-/* Shared Styles for DJINN Documentation */
+/* DJINN Pro Theme - Dark Mode First */
 :root {
-    --bg: #fdfdfd; 
-    --text-main: #24292f;
-    --text-muted: #57606a;
-    --accent: #2da44e; /* GitHub/Homebrew green-ish */
-    --code-bg: #f6f8fa;
-    --border: #d0d7de;
-    --nav-height: 60px;
+    --bg: #030712;
+    /* Very dark blue/black */
+    --bg-secondary: #111827;
+    /* Slightly lighter for cards */
+    --text-main: #f9fafb;
+    --text-muted: #9ca3af;
+    --primary: #8b5cf6;
+    /* Violet/Purple */
+    --primary-glow: rgba(139, 92, 246, 0.5);
+    --accent: #10b981;
+    /* Emerald Green for success/code */
+    --border: #1f2937;
+    --code-bg: #1f2937;
+    --nav-height: 70px;
 }
 
 body {
@@ -16,25 +23,37 @@ body {
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
 }
 
 .container {
-    max-width: 980px;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
 }
 
-/* Header & Nav */
+/* Navbar */
 header {
     border-bottom: 1px solid var(--border);
-    padding: 20px 0;
-    margin-bottom: 40px;
+    backdrop-filter: blur(12px);
+    background: rgba(3, 7, 18, 0.8);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0;
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
 }
 
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .logo-link {
@@ -42,115 +61,182 @@ header {
     align-items: center;
     text-decoration: none;
     color: var(--text-main);
-    font-weight: 700;
-    font-size: 1.2rem;
-    gap: 10px;
+    font-weight: 800;
+    font-size: 1.5rem;
+    gap: 12px;
+    letter-spacing: -0.5px;
 }
 
 .logo-small {
-    height: 32px;
+    height: 36px;
     width: auto;
+    /* Ensure logo stays as-is (white) */
+    filter: drop-shadow(0 0 8px var(--primary-glow));
 }
 
 nav a {
     color: var(--text-muted);
     text-decoration: none;
-    margin-left: 24px;
+    margin-left: 32px;
     font-size: 0.95rem;
     font-weight: 500;
+    transition: color 0.2s ease;
 }
 
-nav a:hover, nav a.active {
+nav a:hover,
+nav a.active {
+    color: var(--text-main);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Hero Section (only on index) */
+.hero-section {
+    text-align: center;
+    padding: 100px 0 60px;
+}
+
+.hero-logo {
+    height: 140px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px var(--primary-glow));
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -2px;
+}
+
+h2.subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-top: 16px;
+    margin-bottom: 48px;
+}
+
+/* Install Box */
+.install-box {
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.install-cmd {
     color: var(--accent);
 }
 
-/* Content */
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    letter-spacing: -0.5px;
+.copy-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.copy-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Content Styling */
+main {
+    padding: 60px 0 100px;
 }
 
 h2 {
-    font-size: 1.75rem;
-    margin-top: 3rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
+    font-size: 2rem;
+    margin-top: 4rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--border);
-}
-
-h3 {
-    font-size: 1.25rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-p, ul, li {
-    color: var(--text-muted);
+    color: var(--text-main);
 }
 
 code {
     font-family: 'JetBrains Mono', monospace;
-    background: var(--code-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: rgba(139, 92, 246, 0.1);
+    /* Subtle purple tint */
+    color: #e9d5ff;
+    padding: 4px 8px;
+    border-radius: 6px;
     font-size: 0.9em;
 }
 
 pre {
-    background: #161b22;
-    color: #c9d1d9;
-    padding: 16px;
-    border-radius: 6px;
+    background: #0f1219;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
     overflow-x: auto;
-    margin: 20px 0;
+    margin: 24px 0;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-pre code {
-    background: none;
-    padding: 0;
-    color: inherit;
+/* Cards / Grid */
+.category {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
+    margin-top: 16px;
 }
 
-th, td {
-    border: 1px solid var(--border);
-    padding: 12px;
-    text-align: left;
+td {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 th {
-    background: var(--code-bg);
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
 }
 
 /* Footer */
 footer {
     border-top: 1px solid var(--border);
-    padding: 40px 0;
+    padding: 60px 0;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
-    margin-top: 80px;
+    background: var(--bg-secondary);
 }
 
 footer a {
-    color: var(--text-muted);
-    text-decoration: underline;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #0d1117;
-        --text-main: #c9d1d9;
-        --text-muted: #8b949e;
-        --code-bg: #161b22;
-        --border: #30363d;
-    }
-    .logo-img, .logo-small { filter: invert(1); }
-    h2 { border-color: var(--border); }
+    color: var(--text-main);
 }
