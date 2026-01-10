@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="assets/djinn_logo.png" alt="DJINN Logo" width="200">
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/version-1.0.0-green" alt="Version">
   <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Python">
   <img src="https://img.shields.io/badge/license-MIT-purple" alt="License">
