@@ -146,6 +146,11 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
         console.print("[muted]       djinn -x \"command\" (execute directly)[/muted]")
         console.print("[muted]       djinn -i  (interactive mode)[/muted]")
         console.print("[muted]       djinn --help  (all options)[/muted]\n")
+        
+        # If running as a frozen executable (EXE) and no args, wait so it doesn't auto-close
+        if getattr(sys, 'frozen', False):
+            console.print("\n[muted]Press Enter to exit...[/muted]")
+            input()
 
 
 def run_single(prompt: str, backend: str, model: str, use_context: bool, explain: bool, execute: bool, confirm: bool):
