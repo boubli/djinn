@@ -17,6 +17,10 @@
   87 specialized commands • Multi-LLM support • Works everywhere
 </p>
 
+<p align="center">
+  <img src="assets/terminal_demo.png" alt="Terminal Demo" width="700">
+</p>
+
 ---
 
 ## 👨‍💻 Developer
