@@ -13,7 +13,7 @@
 <h3 align="center">Terminal Sorcery at Your Command</h3>
 
 <p align="center">
-  <b>Convert natural language to shell commands using AI</b><br>
+  <b>The ultimate AI-powered CLI tool that transforms natural language into precise shell commands.</b><br>
   87 specialized commands • Multi-LLM support • Works everywhere
 </p>
 
@@ -23,27 +23,7 @@
 
 ---
 
-## 👨‍💻 Developer
 
-<p align="center">
-  <a href="https://boubli.tech">
-    <img src="https://img.shields.io/badge/Website-boubli.tech-10B981?style=for-the-badge" alt="Website">
-  </a>
-  <a href="https://github.com/boubli">
-    <img src="https://img.shields.io/badge/GitHub-boubli-181717?style=for-the-badge&logo=github" alt="GitHub">
-  </a>
-  <a href="https://huggingface.co/TRADMSS">
-    <img src="https://img.shields.io/badge/HuggingFace-TRADMSS-yellow?style=for-the-badge" alt="HuggingFace">
-  </a>
-</p>
-
-**Youssef Boubli** - Creative Technologist: AI, Web & Product Design
-
-> Multidisciplinary engineer with 7+ years of full-stack development experience. Creator of HIBA-7B (therapeutic AI) and other AI projects. Building the future with empathetic AI.
-
-📍 Global Remote (Portugal/Morocco) | 📧 bbb.vloger@gmail.com
-
----
 
 ## ✨ Features
 
