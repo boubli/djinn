@@ -58,6 +58,20 @@ djinn "list all docker containers sorted by size"
 
 ---
 
+### 📦 Installation
+
+#### Option 1: Standalone Executable (Windows)
+1. Download `djinn-cli.exe` from [Latest Releases](https://github.com/boubli/djinn/releases).
+2. **Note**: Since the binary is unsigned, Windows SmartScreen may show a warning. Click **"More info"** and then **"Run anyway"**.
+3. Move it to a folder in your PATH to use it from anywhere.
+
+#### Option 2: Python Package (Recommended)
+```bash
+pip install djinn-cli
+```
+
+---
+
 ### 📖 Documentation
 
 For detailed installation guides, command references, and configuration options, visit our official site:
