@@ -65,6 +65,39 @@ def save_config(config: dict):
         json.dump(config, f, indent=2)
 
 
+def auto_detect_backend() -> dict:
+    """Auto-detect available LLM backends and return config."""
+    import requests
+    
+    # Check for OpenAI API key first - if found, use it
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if api_key:
+        return {"backend": "openai", "model": "gpt-4o", "api_key": api_key, "theme": "default"}
+    
+    # Check Ollama (default port 11434)
+    try:
+        r = requests.get("http://localhost:11434/api/tags", timeout=2)
+        if r.status_code == 200:
+            models = r.json().get("models", [])
+            model = models[0]["name"] if models else "llama3.2"
+            return {"backend": "ollama", "model": model, "theme": "default"}
+    except:
+        pass
+    
+    # Check LM Studio (default port 1234)
+    try:
+        r = requests.get("http://localhost:1234/v1/models", timeout=2)
+        if r.status_code == 200:
+            models = r.json().get("data", [])
+            model = models[0]["id"] if models else "local-model"
+            return {"backend": "lmstudio", "model": model, "theme": "default"}
+    except:
+        pass
+    
+    # Default to Ollama (user can start it and change model later)
+    return {"backend": "ollama", "model": "llama3.2", "theme": "default"}
+
+
 def execute_command(command: str, confirm: bool = True) -> tuple:
     """Execute a shell command. Returns (success, error_output)."""
     if confirm:
@@ -137,15 +170,12 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
     # Load config - use defaults if not set (preserves existing config across updates)
     config = load_config()
     
-    # If no config exists, create one with defaults (no interactive setup required)
+    # If no config exists, auto-detect LLM backend and create config
     if not config:
-        config = {
-            "backend": "ollama",
-            "model": "llama3.2",
-            "theme": "default"
-        }
+        config = auto_detect_backend()
         save_config(config)
-        console.print("[muted]Created default config. Use 'djinn config' to customize.[/muted]\n")
+        console.print(f"[success]Auto-detected:[/success] {config.get('backend')} with {config.get('model')}")
+        console.print("[muted]Use 'djinn config' to change settings.[/muted]\n")
 
     # Use CLI args or fall back to config, then defaults
     backend = backend or config.get("backend", "ollama")
