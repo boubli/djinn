@@ -98,6 +98,7 @@ class ContextAnalyzer:
         
         lines = [
             f"OS: {analysis['system']}",
+            f"{self.get_shell_info()}",
             f"Directory: {analysis['path']}",
             f"Files: {analysis['file_count']}, Dirs: {analysis['dir_count']}",
         ]

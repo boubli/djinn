@@ -21,7 +21,7 @@ from rich.prompt import Prompt, Confirm
 from rich.syntax import Syntax
 
 from djinn import __version__
-from djinn.core import DjinnEngine, HistoryManager, ContextAnalyzer, AliasManager
+from djinn.core import DjinnEngine, HistoryManager, ContextAnalyzer, AliasManager, StatsManager
 from djinn.core.autofix import AutoFixPlugin
 from djinn.ui import Logo, Theme, DjinnSpinner
 
@@ -225,9 +225,6 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
     
     if use_context:
         context_str = analyzer.get_context_string()
-        # Add shell info to context
-        shell_info = analyzer.get_shell_info()
-        context_str = f"{shell_info}\n{context_str}"
     
     # Show intent
     console.print(f"\n[prompt]> Intent:[/prompt] {prompt}")
@@ -236,6 +233,7 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
     # Generate command
     engine = DjinnEngine(backend=backend, model=model, api_key=api_key)
     history = HistoryManager()
+    stats = StatsManager()
     
     with spinner.status("Summoning command..."):
         if explain:
@@ -250,6 +248,9 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
         # Success
         spinner.print_success(command)
         
+        # Log stats
+        stats.log_usage("cli", success=True)
+        
         if explanation:
             console.print(f"[muted]Explanation: {explanation}[/muted]\n")
         
@@ -259,6 +260,11 @@ def run_single(prompt: str, backend: str, model: str, use_context: bool, explain
             spinner.print_copied()
         except:
             pass
+        
+        # Show usage stats occasionally
+        summary = stats.get_summary()
+        if summary["today"] % 5 == 0:
+            console.print(f"[muted]💡 You've used DJINN {summary['today']} times today![/muted]")
         
         # Save to history
         history.add(
@@ -298,9 +304,14 @@ def run_interactive(backend: str, model: str, use_context: bool, api_key: str = 
     history = HistoryManager()
     analyzer = ContextAnalyzer()
     alias_mgr = AliasManager()
+    stats = StatsManager()
     
     console.print(f"\n[success]Interactive Mode[/success]")
-    console.print("[muted]Commands: exit, refine <feedback>, run (execute last), aliases[/muted]\n")
+    console.print("[muted]Commands: exit, refine <feedback>, run (execute last), aliases[/muted]")
+    
+    # Show daily stats on startup
+    summary = stats.get_summary()
+    console.print(f"[muted]Stats: {summary['today']} commands today[/muted]\n")
     
     last_prompt = None
     last_command = None
@@ -358,8 +369,6 @@ def run_interactive(backend: str, model: str, use_context: bool, api_key: str = 
                 context_str = None
                 if use_context:
                     context_str = analyzer.get_context_string()
-                    shell_info = analyzer.get_shell_info()
-                    context_str = f"{shell_info}\n{context_str}"
                 
                 with spinner.status("Summoning command..."):
                     command = engine.generate(user_input, context_str)
@@ -369,6 +378,9 @@ def run_interactive(backend: str, model: str, use_context: bool, api_key: str = 
             if command:
                 last_command = command
                 spinner.print_success(command)
+                
+                # Log stats
+                stats.log_usage("cli", success=True)
                 
                 try:
                     pyperclip.copy(command)
@@ -380,8 +392,14 @@ def run_interactive(backend: str, model: str, use_context: bool, api_key: str = 
                     prompt=user_input,
                     command=command,
                     backend=backend,
-                    model=model
+                    model=model,
+                    context=context_str
                 )
+                
+                # Show usage stats occasionally
+                summary = stats.get_summary()
+                if summary["today"] % 5 == 0:
+                    console.print(f"[muted]💡 You've used DJINN {summary['today']} times today![/muted]")
                 
                 console.print()
             else:
