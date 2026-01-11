@@ -91,16 +91,23 @@
                 <h2 class="section-title">Everything You Need</h2>
                 <div class="grid">
                     <div class="card">
+                        <div class="card-icon">🧠</div>
+                        <h3>Smart Context Awareness</h3>
+                        <p>Reads your project files (README, package.json) and detects your Shell to generate perfect
+                            commands.</p>
+                        <code>djinn "generate test based on package.json"</code>
+                    </div>
+                    <div class="card">
                         <div class="card-icon">🤖</div>
-                        <h3>AI-Powered</h3>
-                        <p>Convert natural language to shell commands. Works with Ollama, LM Studio, or OpenAI.</p>
-                        <code>djinn "list docker containers sorted by size"</code>
+                        <h3>Auto-Fix & Auto-Detect</h3>
+                        <p>Automatically finds your LLM (Ollama, LM Studio) and suggests fixes if commands fail.</p>
+                        <code>djinn -x "fix the last error"</code>
                     </div>
                     <div class="card">
                         <div class="card-icon">📊</div>
-                        <h3>TUI Dashboard</h3>
-                        <p>Full-screen system monitor with CPU, RAM, Disk, Network, and process views.</p>
-                        <code>djinn dashboard</code>
+                        <h3>Usage Stats</h3>
+                        <p>Track your productivity with built-in usage statistics and daily tips.</p>
+                        <code>djinn stats</code>
                     </div>
                     <div class="card">
                         <div class="card-icon">📦</div>
@@ -137,12 +144,6 @@
                         <h3>File Explorer</h3>
                         <p>Interactive file manager with cd, ls, tree, mkdir, rm commands.</p>
                         <code>djinn explore /var/log</code>
-                    </div>
-                    <div class="card">
-                        <div class="card-icon">⚡</div>
-                        <h3>Workflow Automation</h3>
-                        <p>Create and run multi-step workflows. Built-in templates for CI/CD.</p>
-                        <code>djinn flow run my-deploy</code>
                     </div>
                 </div>
             </div>
@@ -220,15 +221,15 @@
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Setup LLM Backend</h4>
-                            <code>djinn config set provider ollama</code>
+                            <h4>Auto-Configuration</h4>
+                            <p>DJINN automatically finds Ollama, LM Studio, or OpenAI. No setup needed!</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Start Using</h4>
-                            <code>djinn "your first prompt"</code>
+                            <h4>Start Sorcery</h4>
+                            <code>djinn "create a react app with tailwind"</code>
                         </div>
                     </div>
                 </div>
