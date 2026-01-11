@@ -122,10 +122,18 @@ header {
 .logo-link {
     text-decoration: none;
     transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .logo-link:hover {
     opacity: 0.7;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
 }
 
 .logo-text {
