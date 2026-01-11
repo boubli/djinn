@@ -4,124 +4,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Reference - DJINN</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Commands Reference - DJINN</title>
+    <meta name="description" content="Complete command reference for DJINN - 60+ commands documented with examples.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            font-size: 0.875rem;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        td {
-            color: var(--secondary);
-        }
-
-        tr:hover td {
-            color: var(--primary);
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
     <header>
         <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
+                <span class="logo-text">⚡ DJINN</span>
             </a>
             <nav>
-                <a href="installation.html">Installation</a>
+                <a href="index.html">Home</a>
+                <a href="installation.html">Install</a>
                 <a href="commands.html" class="active">Commands</a>
-                <a href="configuration.html">Configuration</a>
-                <a href="https://github.com/boubli/djinn">GitHub</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="tui.html">TUI</a>
+                <a href="api.html">API</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <div style="padding-top: 60px;">
-            <h1>Command Reference</h1>
-            <p>Exploration of the 87+ specialized commands across various categories.</p>
+    <main class="docs-page">
+        <div class="container">
+            <h1>📖 Complete Command Reference</h1>
+            <p class="lead">60+ built-in commands organized by category</p>
 
-            <section style="margin-top: 4rem;">
-                <h2>DevOps</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Git</td>
-                            <td><code>djinn git "revert last commit but keep changes"</code></td>
-                        </tr>
-                        <tr>
-                            <td>Docker</td>
-                            <td><code>djinn docker "list all images with size"</code></td>
-                        </tr>
-                        <tr>
-                            <td>Kubernetes</td>
-                            <td><code>djinn k8s "scale deployment web to 3 replicas"</code></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <nav class="toc">
+                <h3>Contents</h3>
+                <ul>
+                    <li><a href="#core">Core AI Commands</a></li>
+                    <li><a href="#tui">TUI Commands</a></li>
+                    <li><a href="#automation">Automation</a></li>
+                    <li><a href="#docs">Documentation</a></li>
+                    <li><a href="#env">Environment</a></li>
+                    <li><a href="#productivity">Productivity</a></li>
+                    <li><a href="#devops">DevOps</a></li>
+                    <li><a href="#config">Configuration</a></li>
+                    <li><a href="#fun">Fun & Games</a></li>
+                </ul>
+            </nav>
+
+            <section id="core">
+                <h2>🤖 Core AI Commands</h2>
+
+                <article class="command-doc">
+                    <h3>djinn "prompt"</h3>
+                    <p>Convert natural language to shell commands.</p>
+                    <pre>djinn "list all files larger than 100MB"
+djinn "find Python files modified today"
+djinn "show disk usage sorted by size"
+djinn "create a new React component called Button"</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn -i / --interactive</h3>
+                    <p>Start interactive chat mode for multi-turn conversations.</p>
+                    <pre>djinn -i
+djinn --interactive</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn explain "command"</h3>
+                    <p>Get detailed explanation of any shell command.</p>
+                    <pre>djinn explain "git rebase -i HEAD~5"
+djinn explain "find . -name '*.py' -mtime +30 -delete"</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn suggest</h3>
+                    <p>Get context-aware command suggestions based on your directory.</p>
+                    <pre>djinn suggest</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn redo</h3>
+                    <p>Regenerate the last command with a different approach.</p>
+                    <pre>djinn redo</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn translate "cmd" --to &lt;shell&gt;</h3>
+                    <p>Translate commands between shells (bash/powershell/zsh).</p>
+                    <pre>djinn translate "ls -la" --to powershell
+djinn translate "Get-ChildItem" --to bash</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn why "error"</h3>
+                    <p>Explain WHY a command failed with solutions.</p>
+                    <pre>djinn why "permission denied"
+djinn why "command not found"
+djinn why "connection refused"</pre>
+                </article>
             </section>
 
-            <section style="margin-top: 4rem;">
-                <h2>Cloud</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>AWS</td>
-                            <td><code>djinn aws "list all s3 buckets"</code></td>
-                        </tr>
-                        <tr>
-                            <td>GCP</td>
-                            <td><code>djinn gcp "create a new compute engine instance"</code></td>
-                        </tr>
-                        <tr>
-                            <td>Azure</td>
-                            <td><code>djinn azure "list all resource groups"</code></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <section id="tui">
+                <h2>🖥️ TUI Commands</h2>
+                <p>Full-screen interactive terminal interfaces. <a href="tui.html">See detailed TUI docs →</a></p>
+
+                <article class="command-doc">
+                    <h3>djinn dashboard</h3>
+                    <p>Launch full-screen system monitor (CPU, RAM, Disk, Network, Processes).</p>
+                    <pre>djinn dashboard
+# Press Ctrl+C to exit</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn explore [path]</h3>
+                    <p>Interactive file explorer.</p>
+                    <pre>djinn explore
+djinn explore /var/log
+djinn explore ~/projects</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn db &lt;action&gt; [args]</h3>
+                    <p>Database viewer for SQLite, PostgreSQL, MySQL.</p>
+                    <pre>djinn db connect
+djinn db connect mydb.sqlite
+djinn db tables mydb.sqlite
+djinn db query mydb.sqlite "SELECT * FROM users LIMIT 10"
+djinn db info mydb.sqlite</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn http &lt;method&gt; &lt;url&gt;</h3>
+                    <p>HTTP client for API testing.</p>
+                    <pre>djinn http get https://api.github.com
+djinn http post https://api.example.com -d '{"name":"John"}'
+djinn http get https://api.example.com -H "Authorization:Bearer token"</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn pkg &lt;action&gt; [package]</h3>
+                    <p>Universal package manager (npm/pip/cargo/go/gem).</p>
+                    <pre>djinn pkg info
+djinn pkg install react
+djinn pkg install flask -D
+djinn pkg list
+djinn pkg outdated</pre>
+                </article>
             </section>
 
-            <!-- More sections can be added as needed -->
+            <section id="automation">
+                <h2>⚡ Automation</h2>
+
+                <article class="command-doc">
+                    <h3>djinn flow &lt;action&gt; [name]</h3>
+                    <p>Multi-step workflow automation.</p>
+                    <pre>djinn flow templates          # List built-in templates
+djinn flow create my-deploy   # Create new workflow
+djinn flow list               # List your workflows
+djinn flow run my-deploy      # Execute workflow
+djinn flow run ci --dry-run   # Preview without executing
+djinn flow delete old-flow    # Delete workflow</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn schedule &lt;action&gt; [args]</h3>
+                    <p>Schedule commands for later execution.</p>
+                    <pre>djinn schedule add "npm test" +1h      # Run in 1 hour
+djinn schedule add "backup" +30m       # Run in 30 minutes
+djinn schedule add "cleanup" +1d       # Run tomorrow
+djinn schedule list                    # List pending tasks
+djinn schedule run                     # Execute due tasks
+djinn schedule cancel task-123         # Cancel task</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn voice [--listen]</h3>
+                    <p>Voice control for terminal commands.</p>
+                    <pre>djinn voice             # Single voice command
+djinn voice --listen    # Continuous listening mode</pre>
+                    <p>Supported phrases: "list files", "git status", "docker containers", "run tests"</p>
+                </article>
+            </section>
+
+            <section id="docs">
+                <h2>📝 Documentation</h2>
+
+                <article class="command-doc">
+                    <h3>djinn docs &lt;action&gt; [file]</h3>
+                    <p>Auto-generate documentation.</p>
+                    <pre>djinn docs readme           # Generate README for project
+djinn docs script file.py   # Document a script
+djinn docs api module.py    # Generate API docs</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn record &lt;action&gt; [name]</h3>
+                    <p>Record terminal sessions.</p>
+                    <pre>djinn record start my-session   # Start recording
+djinn record stop               # Stop and save
+djinn record list               # List recordings
+djinn record export my-session  # Export as script
+djinn record delete my-session  # Delete recording</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn gist "content"</h3>
+                    <p>Share as GitHub Gist.</p>
+                    <pre>djinn gist "my awesome script"
+# Requires GITHUB_TOKEN environment variable</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn review [file] [--staged]</h3>
+                    <p>AI-powered code review.</p>
+                    <pre>djinn review              # Review uncommitted changes
+djinn review --staged     # Review staged only
+djinn review file.py      # Review specific file</pre>
+                </article>
+            </section>
+
+            <section id="env">
+                <h2>🌿 Environment</h2>
+
+                <article class="command-doc">
+                    <h3>djinn env &lt;action&gt; [args]</h3>
+                    <p>Manage .env files.</p>
+                    <pre>djinn env list              # List variables (masks secrets)
+djinn env get API_KEY       # Get variable value
+djinn env set API_KEY value # Set variable
+djinn env delete API_KEY    # Remove variable
+djinn env backup            # Backup .env
+djinn env validate          # Check for issues</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn dotfiles &lt;action&gt;</h3>
+                    <p>Backup and restore dotfiles.</p>
+                    <pre>djinn dotfiles backup     # Backup .bashrc, .gitconfig, etc.
+djinn dotfiles restore    # Restore from backup
+djinn dotfiles list       # List backed up files
+djinn dotfiles export     # Export as tar.gz</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn setup &lt;action&gt; [template]</h3>
+                    <p>Quick project setup.</p>
+                    <pre>djinn setup list          # List templates
+djinn setup new node      # Node.js project
+djinn setup new python    # Python project
+djinn setup new fastapi   # FastAPI API
+djinn setup new express   # Express.js API</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn ssh &lt;action&gt; [args]</h3>
+                    <p>SSH connection manager.</p>
+                    <pre>djinn ssh list                    # List saved connections
+djinn ssh add server host user    # Add connection
+djinn ssh connect server          # Get connect command
+djinn ssh keys                    # List SSH keys</pre>
+                </article>
+            </section>
+
+            <section id="productivity">
+                <h2>🎯 Productivity</h2>
+
+                <article class="command-doc">
+                    <h3>djinn learn &lt;action&gt; [args]</h3>
+                    <p>Learn from your patterns.</p>
+                    <pre>djinn learn status                      # View learning status
+djinn learn shortcut                    # List shortcuts
+djinn learn shortcut add deploy "..."   # Add shortcut
+djinn learn insights                    # Usage insights</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn predict</h3>
+                    <p>Predictive command suggestions based on history.</p>
+                    <pre>djinn predict</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn cheat &lt;tool&gt; [search]</h3>
+                    <p>Built-in cheatsheets.</p>
+                    <pre>djinn cheat git               # Git cheatsheet
+djinn cheat docker            # Docker cheatsheet
+djinn cheat git search rebase # Search in cheatsheet</pre>
+                    <p>Available: git, docker, kubernetes, linux, npm, python, aws, postgres</p>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn notify "message"</h3>
+                    <p>Desktop notifications.</p>
+                    <pre>djinn notify "Build complete!"
+djinn notify "Error occurred" --error</pre>
+                </article>
+            </section>
+
+            <section id="devops">
+                <h2>🔧 DevOps</h2>
+
+                <article class="command-doc">
+                    <h3>djinn compose &lt;action&gt;</h3>
+                    <p>Docker Compose generator.</p>
+                    <pre>djinn compose templates       # List templates
+djinn compose generate        # Generate from AI
+djinn compose from-template wordpress</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn scan</h3>
+                    <p>Dependency vulnerability scanner.</p>
+                    <pre>djinn scan                    # Scan current project
+djinn scan --fix              # Auto-fix issues</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn release &lt;action&gt;</h3>
+                    <p>Git release automation.</p>
+                    <pre>djinn release version         # Show current version
+djinn release bump patch      # Bump patch version
+djinn release bump minor      # Bump minor version
+djinn release bump major      # Bump major version
+djinn release tag             # Create and push tag</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn architect &lt;action&gt; [args]</h3>
+                    <p>Project architecture generator.</p>
+                    <pre>djinn architect list                          # List templates
+djinn architect stacks                        # Quick stacks
+djinn architect create fullstack-react-node myapp</pre>
+                </article>
+            </section>
+
+            <section id="config">
+                <h2>⚙️ Configuration</h2>
+
+                <article class="command-doc">
+                    <h3>djinn config &lt;action&gt; [args]</h3>
+                    <p>Manage DJINN configuration.</p>
+                    <pre>djinn config show                 # Show all settings
+djinn config set provider ollama  # Set LLM provider
+djinn config set model llama3.2   # Set model
+djinn config reset                # Reset to defaults</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn theme &lt;action&gt; [name]</h3>
+                    <p>UI theme management.</p>
+                    <pre>djinn theme list              # List themes
+djinn theme set cyberpunk     # Set theme</pre>
+                    <p>Available: default, cyberpunk, retro, nord, dracula, solarized, monokai, light</p>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn model &lt;action&gt; [name]</h3>
+                    <p>LLM model management (Ollama).</p>
+                    <pre>djinn model list              # List installed models
+djinn model browse            # Browse available
+djinn model download llama3   # Download model
+djinn model delete codellama  # Remove model
+djinn model info llama3       # Model details
+djinn model recommend         # Recommendations for your hardware</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn sync &lt;action&gt;</h3>
+                    <p>Export/import DJINN settings.</p>
+                    <pre>djinn sync export             # Export to file
+djinn sync import file.json   # Import from file
+djinn sync share              # Create shareable link</pre>
+                </article>
+            </section>
+
+            <section id="fun">
+                <h2>🎮 Fun & Games</h2>
+
+                <article class="command-doc">
+                    <h3>djinn game &lt;type&gt;</h3>
+                    <p>Educational games.</p>
+                    <pre>djinn game typing     # CLI typing practice
+djinn game quiz       # CLI knowledge quiz
+djinn game memory     # Command memory game</pre>
+                </article>
+
+                <article class="command-doc">
+                    <h3>djinn speak "message"</h3>
+                    <p>Text-to-speech.</p>
+                    <pre>djinn speak "Hello world"
+djinn speak "Build complete"</pre>
+                </article>
+            </section>
         </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
         </div>
     </footer>
-
 </body>
 
 </html>

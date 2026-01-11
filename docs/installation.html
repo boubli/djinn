@@ -5,65 +5,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installation - DJINN</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="description"
+        content="Install DJINN via pip, executable, or from source. Supports Windows, macOS, and Linux.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-
     <header>
         <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
+                <span class="logo-text">⚡ DJINN</span>
             </a>
             <nav>
-                <a href="installation.html" class="active">Installation</a>
+                <a href="index.html">Home</a>
+                <a href="installation.html" class="active">Install</a>
                 <a href="commands.html">Commands</a>
-                <a href="configuration.html">Configuration</a>
-                <a href="https://github.com/boubli/djinn">GitHub</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="tui.html">TUI</a>
+                <a href="api.html">API</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
-        <div style="padding-top: 60px;">
-            <h1>Installation</h1>
-            <p>Follow these steps to get DJINN running on your machine.</p>
+    <main class="docs-page">
+        <div class="container">
+            <h1>📦 Installation</h1>
+            <p class="lead">Install DJINN in under a minute. Works on Windows, macOS, and Linux.</p>
 
-            <section style="margin-top: 4rem;">
-                <h2>Quick Start</h2>
-                <p>Install the DJINN CLI directly from our repository.</p>
-                <pre><code>git clone https://github.com/boubli/djinn.git
-cd djinn
-pip install -e .</code></pre>
+            <section id="pip">
+                <h2>Method 1: pip (Recommended)</h2>
+                <p>Install from PyPI:</p>
+                <pre>pip install djinn-cli</pre>
+
+                <h3>Upgrade to Latest</h3>
+                <pre>pip install --upgrade djinn-cli</pre>
+
+                <h3>Install Specific Version</h3>
+                <pre>pip install djinn-cli==2.0.0    # Latest
+pip install djinn-cli==1.0.2    # Previous
+pip install djinn-cli==1.0.0    # First release</pre>
+
+                <h3>Install from GitHub</h3>
+                <pre>pip install git+https://github.com/boubli/djinn.git</pre>
             </section>
 
-            <section style="margin-top: 4rem;">
+            <section id="executable">
+                <h2>Method 2: Windows Executable</h2>
+                <p>No Python required:</p>
+                <ol>
+                    <li>Go to <a href="https://github.com/boubli/djinn/releases">GitHub Releases</a></li>
+                    <li>Download <code>djinn.exe</code></li>
+                    <li>Move to a folder in your PATH</li>
+                    <li>Run from any terminal</li>
+                </ol>
+
+                <div class="warning-box">
+                    <strong>Note:</strong> Windows SmartScreen may show a warning since the binary is unsigned. Click
+                    "More info" → "Run anyway".
+                </div>
+            </section>
+
+            <section id="source">
+                <h2>Method 3: From Source</h2>
+                <pre>git clone https://github.com/boubli/djinn.git
+cd djinn
+pip install -e .</pre>
+            </section>
+
+            <section id="verify">
+                <h2>Verify Installation</h2>
+                <pre>djinn --version
+djinn --help</pre>
+            </section>
+
+            <section id="requirements">
                 <h2>Requirements</h2>
                 <ul>
-                    <li>Python 3.8+</li>
-                    <li>Pip</li>
-                    <li>Ollama (recommended for local LLM)</li>
+                    <li><strong>Python:</strong> 3.8 or higher</li>
+                    <li><strong>OS:</strong> Windows, macOS, Linux</li>
                 </ul>
+
+                <h3>Dependencies (auto-installed)</h3>
+                <ul>
+                    <li><code>click</code> - CLI framework</li>
+                    <li><code>rich</code> - Beautiful terminal output</li>
+                    <li><code>requests</code> - HTTP client</li>
+                    <li><code>pyperclip</code> - Clipboard support</li>
+                </ul>
+
+                <h3>Optional Dependencies</h3>
+                <pre># For system dashboard
+pip install psutil
+
+# For voice control
+pip install SpeechRecognition pyaudio
+
+# For PostgreSQL database viewer
+pip install psycopg2
+
+# For MySQL database viewer
+pip install mysql-connector-python</pre>
             </section>
 
-            <section style="margin-top: 4rem; margin-bottom: 6rem;">
-                <h2>Next Steps</h2>
-                <p>Once installed, verify it works by running:</p>
-                <pre><code>djinn --help</code></pre>
-                <p>Then, head over to <a href="configuration.html">Configuration</a> to set up your LLM backend.</p>
+            <section id="llm-quick">
+                <h2>Quick LLM Setup</h2>
+                <p>After installing, set up an AI backend:</p>
+
+                <h3>Option A: Ollama (Free & Local)</h3>
+                <pre># Install Ollama from https://ollama.ai
+ollama serve
+ollama pull llama3.2
+
+# Configure DJINN
+djinn config set provider ollama
+djinn config set model llama3.2</pre>
+
+                <h3>Option B: OpenAI (Cloud)</h3>
+                <pre>export OPENAI_API_KEY="your-key"
+djinn config set provider openai
+djinn config set model gpt-4</pre>
+
+                <p><a href="api.html">See full LLM setup guide →</a></p>
+            </section>
+
+            <section id="test">
+                <h2>Quick Test</h2>
+                <pre># Generate a command
+djinn "list all Python files"
+
+# Interactive mode
+djinn -i
+
+# Launch dashboard
+djinn dashboard
+
+# View help
+djinn --help</pre>
+            </section>
+
+            <section id="troubleshooting">
+                <h2>Troubleshooting</h2>
+
+                <h3>"djinn not found"</h3>
+                <p>Add Python scripts to your PATH:</p>
+                <pre># Windows
+set PATH=%PATH%;%APPDATA%\Python\Python311\Scripts
+
+# Linux/macOS
+export PATH=$PATH:~/.local/bin</pre>
+
+                <h3>"No LLM configured"</h3>
+                <pre>djinn config set provider ollama
+djinn config set model llama3.2</pre>
+
+                <h3>"Permission denied"</h3>
+                <pre># Linux/macOS
+sudo pip install djinn-cli
+
+# Or install for user only
+pip install --user djinn-cli</pre>
+            </section>
+
+            <section id="versions">
+                <h2>Version History</h2>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th>Date</th>
+                            <th>Highlights</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>2.0.0</strong></td>
+                            <td>2026-01-11</td>
+                            <td>TUI Dashboard, Universal Pkg Manager, Voice Control, AI Code Reviewer, 60+ commands</td>
+                        </tr>
+                        <tr>
+                            <td>1.0.2</td>
+                            <td>2026-01-10</td>
+                            <td>900+ plugin templates, cheatsheets, workflows, notifications</td>
+                        </tr>
+                        <tr>
+                            <td>1.0.0</td>
+                            <td>2026-01-10</td>
+                            <td>Initial release with 87 commands</td>
+                        </tr>
+                    </tbody>
+                </table>
             </section>
         </div>
     </main>
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
         </div>
     </footer>
-
 </body>
 
 </html>

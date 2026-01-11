@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUI Features - DJINN</title>
+    <meta name="description" content="DJINN TUI features - Dashboard, File Explorer, Database Viewer, HTTP Client">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">⚡ DJINN</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="installation.html">Install</a>
+                <a href="commands.html">Commands</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="tui.html" class="active">TUI</a>
+                <a href="api.html">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="docs-page">
+        <div class="container">
+            <h1>🖥️ TUI Features</h1>
+            <p class="lead">Full-screen interactive terminal interfaces for monitoring, browsing, and testing.</p>
+
+            <section class="tui-section" id="dashboard">
+                <h2>📊 System Dashboard</h2>
+                <p>A beautiful full-screen system monitor that displays real-time information about your system.</p>
+
+                <div class="command-block">
+                    <code>djinn dashboard</code>
+                </div>
+
+                <h3>What It Shows</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🔥 CPU</h4>
+                        <p>Per-core usage bars, total percentage, frequency</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>💾 Memory</h4>
+                        <p>RAM and Swap usage with visual bars</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>💿 Disks</h4>
+                        <p>Usage for each mounted partition</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🌐 Network</h4>
+                        <p>Bytes sent/received, packet counts</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>⚡ Processes</h4>
+                        <p>Top 8 processes by CPU usage</p>
+                    </div>
+                </div>
+
+                <h3>Controls</h3>
+                <ul>
+                    <li><kbd>Ctrl+C</kbd> - Exit dashboard</li>
+                    <li>Auto-refreshes every second</li>
+                </ul>
+            </section>
+
+            <section class="tui-section" id="explorer">
+                <h2>📁 File Explorer</h2>
+                <p>Interactive terminal file manager for browsing and managing files.</p>
+
+                <div class="command-block">
+                    <code>djinn explore [path]</code>
+                </div>
+
+                <h3>Commands</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ls</code></td>
+                            <td>List files in current directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -a</code></td>
+                            <td>Show hidden files</td>
+                        </tr>
+                        <tr>
+                            <td><code>cd &lt;dir&gt;</code></td>
+                            <td>Change directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>cd ..</code></td>
+                            <td>Go up one level</td>
+                        </tr>
+                        <tr>
+                            <td><code>cd ~</code></td>
+                            <td>Go to home directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>tree</code></td>
+                            <td>Show directory tree</td>
+                        </tr>
+                        <tr>
+                            <td><code>mkdir &lt;name&gt;</code></td>
+                            <td>Create directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>rm &lt;name&gt;</code></td>
+                            <td>Remove file/directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>pwd</code></td>
+                            <td>Print working directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>q</code></td>
+                            <td>Quit explorer</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Examples</h3>
+                <pre>
+$ djinn explore
+$ djinn explore /var/log
+$ djinn explore ~/projects
+                </pre>
+            </section>
+
+            <section class="tui-section" id="database">
+                <h2>🗄️ Database Viewer</h2>
+                <p>Browse and query databases directly in your terminal.</p>
+
+                <h3>Supported Databases</h3>
+                <ul>
+                    <li>SQLite (.db, .sqlite, .sqlite3)</li>
+                    <li>PostgreSQL (requires psycopg2)</li>
+                    <li>MySQL (requires mysql-connector-python)</li>
+                </ul>
+
+                <h3>Commands</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>djinn db connect</code></td>
+                            <td>Find SQLite databases in current directory</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn db connect file.db</code></td>
+                            <td>Connect to SQLite database</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn db tables file.db</code></td>
+                            <td>List all tables with row counts</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn db query file.db "SQL"</code></td>
+                            <td>Execute SQL query</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn db info file.db</code></td>
+                            <td>Get database statistics</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Examples</h3>
+                <pre>
+# Find databases
+$ djinn db connect
+Found Databases:
+  • ./myapp.db
+  • ./data/users.sqlite
+
+# List tables
+$ djinn db tables myapp.db
+Tables:
+  📋 users (1234 rows)
+  📋 posts (5678 rows)
+  📋 comments (9012 rows)
+
+# Run query
+$ djinn db query myapp.db "SELECT * FROM users LIMIT 5"
+┌────┬──────────┬─────────────────┐
+│ id │ name     │ email           │
+├────┼──────────┼─────────────────┤
+│ 1  │ John     │ john@example.com│
+│ 2  │ Jane     │ jane@example.com│
+└────┴──────────┴─────────────────┘
+                </pre>
+            </section>
+
+            <section class="tui-section" id="http">
+                <h2>🌐 HTTP Client</h2>
+                <p>Test APIs directly from your terminal with beautiful response rendering.</p>
+
+                <h3>Methods</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>djinn http get &lt;url&gt;</code></td>
+                            <td>GET request</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn http post &lt;url&gt; -d 'json'</code></td>
+                            <td>POST request with JSON body</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn http put &lt;url&gt; -d 'json'</code></td>
+                            <td>PUT request</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn http delete &lt;url&gt;</code></td>
+                            <td>DELETE request</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Options</h3>
+                <ul>
+                    <li><code>-d, --data</code> - JSON data for POST/PUT</li>
+                    <li><code>-H, --header</code> - Add header (key:value)</li>
+                </ul>
+
+                <h3>Examples</h3>
+                <pre>
+# Simple GET
+$ djinn http get https://api.github.com/users/octocat
+
+GET https://api.github.com/users/octocat
+Status: 200 | Time: 234ms | Size: 1234 bytes
+╭─ Response Body ─────────────────────────────────╮
+│ {                                               │
+│   "login": "octocat",                           │
+│   "id": 583231,                                 │
+│   "name": "The Octocat"                         │
+│ }                                               │
+╰─────────────────────────────────────────────────╯
+
+# POST with JSON data
+$ djinn http post https://api.example.com/users -d '{"name":"John","email":"john@example.com"}'
+
+# With headers
+$ djinn http get https://api.example.com -H "Authorization:Bearer token123"
+                </pre>
+            </section>
+
+            <section class="tui-section" id="pkg">
+                <h2>📦 Universal Package Manager</h2>
+                <p>One command for all package managers. Auto-detects project type.</p>
+
+                <h3>Supported Package Managers</h3>
+                <div class="grid-3">
+                    <div class="pkg-item">npm</div>
+                    <div class="pkg-item">yarn</div>
+                    <div class="pkg-item">pnpm</div>
+                    <div class="pkg-item">pip</div>
+                    <div class="pkg-item">poetry</div>
+                    <div class="pkg-item">cargo</div>
+                    <div class="pkg-item">go</div>
+                    <div class="pkg-item">gem</div>
+                    <div class="pkg-item">composer</div>
+                    <div class="pkg-item">apt</div>
+                    <div class="pkg-item">brew</div>
+                </div>
+
+                <h3>Commands</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>djinn pkg info</code></td>
+                            <td>Show detected package manager</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg install &lt;pkg&gt;</code></td>
+                            <td>Install package</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg install &lt;pkg&gt; -D</code></td>
+                            <td>Install as dev dependency</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg uninstall &lt;pkg&gt;</code></td>
+                            <td>Remove package</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg list</code></td>
+                            <td>List installed packages</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg update</code></td>
+                            <td>Update all packages</td>
+                        </tr>
+                        <tr>
+                            <td><code>djinn pkg outdated</code></td>
+                            <td>Check for outdated packages</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>How It Works</h3>
+                <p>DJINN detects your project type based on config files:</p>
+                <ul>
+                    <li><code>package.json</code> → npm/yarn/pnpm</li>
+                    <li><code>requirements.txt</code> or <code>pyproject.toml</code> → pip/poetry</li>
+                    <li><code>Cargo.toml</code> → cargo</li>
+                    <li><code>go.mod</code> → go</li>
+                    <li><code>Gemfile</code> → gem</li>
+                    <li><code>composer.json</code> → composer</li>
+                </ul>
+
+                <h3>Examples</h3>
+                <pre>
+# In a Node.js project
+$ djinn pkg install react
+Using: npm
+Installing react...
+✅ Installed react
+
+# In a Python project
+$ djinn pkg install requests
+Using: pip
+Installing requests...
+✅ Installed requests
+
+# Force specific manager
+$ djinn pkg install express --manager npm
+                </pre>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>

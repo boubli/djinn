@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API & Configuration - DJINN</title>
+    <meta name="description" content="DJINN API configuration, LLM setup, and advanced options.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">⚡ DJINN</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="installation.html">Install</a>
+                <a href="commands.html">Commands</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="tui.html">TUI</a>
+                <a href="api.html" class="active">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="docs-page">
+        <div class="container">
+            <h1>🔌 API & Configuration</h1>
+            <p class="lead">Configure DJINN, set up LLM backends, and customize your experience.</p>
+
+            <section id="llm-setup">
+                <h2>🤖 LLM Backend Setup</h2>
+                <p>DJINN needs an AI backend to generate commands. Choose one:</p>
+
+                <div class="provider-cards">
+                    <div class="provider-card recommended">
+                        <div class="provider-badge">Recommended</div>
+                        <h3>Ollama</h3>
+                        <p>Free, local, private. No API key needed.</p>
+                        <div class="provider-steps">
+                            <h4>Setup</h4>
+                            <pre># 1. Install Ollama
+# Download from https://ollama.ai
+
+# 2. Start Ollama
+ollama serve
+
+# 3. Download a model
+ollama pull llama3.2
+
+# 4. Configure DJINN
+djinn config set provider ollama
+djinn config set model llama3.2</pre>
+                        </div>
+                        <h4>Recommended Models</h4>
+                        <table class="docs-table">
+                            <tr>
+                                <td><code>llama3.2</code></td>
+                                <td>Best overall, 8B params</td>
+                            </tr>
+                            <tr>
+                                <td><code>codellama</code></td>
+                                <td>Best for code</td>
+                            </tr>
+                            <tr>
+                                <td><code>mistral</code></td>
+                                <td>Fast and capable</td>
+                            </tr>
+                            <tr>
+                                <td><code>phi3</code></td>
+                                <td>Lightweight, 3B params</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="provider-card">
+                        <h3>LM Studio</h3>
+                        <p>Local with GUI. Choose any GGUF model.</p>
+                        <div class="provider-steps">
+                            <h4>Setup</h4>
+                            <pre># 1. Download from https://lmstudio.ai
+
+# 2. Load a model in LM Studio
+
+# 3. Start local server (port 1234)
+
+# 4. Configure DJINN
+djinn config set provider lmstudio
+djinn config set api_url http://localhost:1234/v1</pre>
+                        </div>
+                    </div>
+
+                    <div class="provider-card">
+                        <h3>OpenAI</h3>
+                        <p>Cloud-based. Requires API key.</p>
+                        <div class="provider-steps">
+                            <h4>Setup</h4>
+                            <pre># 1. Get API key from https://platform.openai.com
+
+# 2. Set environment variable
+export OPENAI_API_KEY="sk-..."
+
+# 3. Configure DJINN
+djinn config set provider openai
+djinn config set model gpt-4</pre>
+                        </div>
+                        <h4>Available Models</h4>
+                        <table class="docs-table">
+                            <tr>
+                                <td><code>gpt-4o</code></td>
+                                <td>Latest, best quality</td>
+                            </tr>
+                            <tr>
+                                <td><code>gpt-4</code></td>
+                                <td>Very capable</td>
+                            </tr>
+                            <tr>
+                                <td><code>gpt-3.5-turbo</code></td>
+                                <td>Fast, cheaper</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="configuration">
+                <h2>⚙️ Configuration</h2>
+
+                <h3>View Configuration</h3>
+                <pre>djinn config show</pre>
+
+                <h3>Available Settings</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Setting</th>
+                            <th>Description</th>
+                            <th>Default</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>provider</code></td>
+                            <td>LLM provider (ollama, lmstudio, openai)</td>
+                            <td>ollama</td>
+                        </tr>
+                        <tr>
+                            <td><code>model</code></td>
+                            <td>Model name</td>
+                            <td>llama3.2</td>
+                        </tr>
+                        <tr>
+                            <td><code>api_url</code></td>
+                            <td>Custom API URL</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><code>temperature</code></td>
+                            <td>Generation temperature (0.0-1.0)</td>
+                            <td>0.7</td>
+                        </tr>
+                        <tr>
+                            <td><code>max_tokens</code></td>
+                            <td>Maximum response tokens</td>
+                            <td>1024</td>
+                        </tr>
+                        <tr>
+                            <td><code>theme</code></td>
+                            <td>UI theme</td>
+                            <td>default</td>
+                        </tr>
+                        <tr>
+                            <td><code>auto_execute</code></td>
+                            <td>Auto-execute commands</td>
+                            <td>false</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Set Configuration</h3>
+                <pre>djinn config set provider ollama
+djinn config set model llama3.2
+djinn config set temperature 0.5
+djinn config set theme cyberpunk</pre>
+
+                <h3>Reset to Defaults</h3>
+                <pre>djinn config reset</pre>
+            </section>
+
+            <section id="themes">
+                <h2>🎨 Themes</h2>
+                <p>DJINN comes with 8 beautiful themes.</p>
+
+                <pre>djinn theme list      # List all themes
+djinn theme set NAME  # Set theme</pre>
+
+                <div class="theme-grid">
+                    <div class="theme-item">
+                        <h4>default</h4>
+                        <p>Clean, professional look</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>cyberpunk</h4>
+                        <p>Neon pink and cyan</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>retro</h4>
+                        <p>Classic green terminal</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>nord</h4>
+                        <p>Arctic, blue-tinted</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>dracula</h4>
+                        <p>Dark theme with purple</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>solarized</h4>
+                        <p>Eye-friendly colors</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>monokai</h4>
+                        <p>Popular syntax colors</p>
+                    </div>
+                    <div class="theme-item">
+                        <h4>light</h4>
+                        <p>Light background</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="models">
+                <h2>📦 Model Management</h2>
+                <p>For Ollama users, manage models directly from DJINN.</p>
+
+                <pre># List installed models
+djinn model list
+
+# Browse available models
+djinn model browse
+
+# Download a model
+djinn model download llama3.2
+djinn model download codellama:7b
+
+# Get model info
+djinn model info llama3
+
+# Delete a model
+djinn model delete old-model
+
+# Get recommendations based on your hardware
+djinn model recommend</pre>
+
+                <h3>Model Recommendations by VRAM</h3>
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>VRAM</th>
+                            <th>Recommended Models</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>4GB</td>
+                            <td>phi3, tinyllama</td>
+                        </tr>
+                        <tr>
+                            <td>8GB</td>
+                            <td>llama3.2:8b, mistral, codellama:7b</td>
+                        </tr>
+                        <tr>
+                            <td>16GB</td>
+                            <td>llama3.2:70b-q4, codellama:34b</td>
+                        </tr>
+                        <tr>
+                            <td>24GB+</td>
+                            <td>llama3:70b, mixtral</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="env-vars">
+                <h2>🔐 Environment Variables</h2>
+                <p>DJINN respects these environment variables:</p>
+
+                <table class="docs-table">
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>OPENAI_API_KEY</code></td>
+                            <td>OpenAI API key (for OpenAI provider)</td>
+                        </tr>
+                        <tr>
+                            <td><code>GITHUB_TOKEN</code></td>
+                            <td>GitHub token (for gist command)</td>
+                        </tr>
+                        <tr>
+                            <td><code>DJINN_CONFIG</code></td>
+                            <td>Custom config file path</td>
+                        </tr>
+                        <tr>
+                            <td><code>DJINN_THEME</code></td>
+                            <td>Override theme</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="config-file">
+                <h2>📄 Config File Location</h2>
+                <p>DJINN stores configuration in:</p>
+
+                <table class="docs-table">
+                    <tr>
+                        <td>Windows</td>
+                        <td><code>%USERPROFILE%\.djinn\config.json</code></td>
+                    </tr>
+                    <tr>
+                        <td>macOS/Linux</td>
+                        <td><code>~/.djinn/config.json</code></td>
+                    </tr>
+                </table>
+
+                <h3>Sample Config</h3>
+                <pre>{
+  "provider": "ollama",
+  "model": "llama3.2",
+  "temperature": 0.7,
+  "max_tokens": 1024,
+  "theme": "cyberpunk",
+  "auto_execute": false,
+  "history_size": 100
+}</pre>
+            </section>
+
+            <section id="aliases">
+                <h2>🔗 Aliases</h2>
+                <p>Create shortcuts for common prompts.</p>
+
+                <pre># Add alias
+djinn alias add deploy "deploy to production server"
+djinn alias add lint "run linter and fix issues"
+
+# List aliases
+djinn alias list
+
+# Use alias
+djinn @deploy
+djinn @lint
+
+# Remove alias
+djinn alias remove deploy</pre>
+            </section>
+
+            <section id="sync">
+                <h2>🔄 Settings Sync</h2>
+                <p>Export and import your DJINN configuration.</p>
+
+                <pre># Export settings
+djinn sync export
+# Creates djinn-settings.json
+
+# Import settings
+djinn sync import djinn-settings.json
+
+# Create shareable link
+djinn sync share
+# Outputs base64 link</pre>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>

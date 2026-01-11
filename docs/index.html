@@ -4,25 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJINN - The AI-Powered CLI</title>
-    <meta name="description" content="Convert natural language to shell commands with AI.">
-    <link rel="stylesheet" href="styles.css">
+    <title>DJINN - The Ultimate AI-Powered CLI Tool</title>
+    <meta name="description"
+        content="DJINN transforms natural language into shell commands. 60+ commands, 900+ plugins, TUI Dashboard, Voice Control, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="assets/logo.png">
 </head>
 
 <body>
-
     <header>
         <div class="container nav-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/djinn_logo.png" alt="DJINN" class="logo-img">
+                <span class="logo-text">⚡ DJINN</span>
             </a>
             <nav>
-                <a href="installation.html">Installation</a>
+                <a href="index.html" class="active">Home</a>
+                <a href="installation.html">Install</a>
                 <a href="commands.html">Commands</a>
-                <a href="configuration.html">Configuration</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="tui.html">TUI</a>
+                <a href="api.html">API</a>
                 <a href="https://github.com/boubli/djinn">GitHub</a>
             </nav>
         </div>
@@ -31,44 +36,201 @@
     <main>
         <section class="hero">
             <div class="container">
-                <h1>DJINN</h1>
-                <p class="subtitle">The ultimate AI-powered CLI tool that transforms natural language into precise shell
-                    commands. Featuring 87+ specialized plugins.</p>
-
-                <div style="display: flex; gap: 1rem; justify-content: center;">
-                    <a href="installation.html" class="btn btn-primary">Get Started</a>
-                    <a href="https://github.com/boubli/djinn" class="btn btn-secondary">View on GitHub</a>
+                <div class="version-badge">v2.0.0 - Ultimate Edition</div>
+                <h1>⚡ DJINN</h1>
+                <p class="subtitle">The Ultimate AI-Powered CLI Tool that transforms natural language into precise shell
+                    commands</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">60+</span>
+                        <span class="stat-label">Commands</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">900+</span>
+                        <span class="stat-label">Plugin Templates</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Plugin Modules</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Themes</span>
+                    </div>
                 </div>
+                <div class="hero-buttons">
+                    <a href="installation.html" class="btn btn-primary">Get Started</a>
+                    <a href="commands.html" class="btn btn-secondary">View Commands</a>
+                </div>
+            </div>
+        </section>
 
+        <section class="terminal-demo">
+            <div class="container">
                 <div class="terminal-box">
-                    <div>
-                        <span class="terminal-prompt">$</span> djinn git "undo last commit"
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
                     </div>
-                    <div style="margin-top: 10px; color: #fff;">
-                        ✓ git reset --soft HEAD~1
-                    </div>
-                    <div style="margin-top: 10px; opacity: 0.5;">
-                        # Copied to clipboard!
+                    <div class="terminal-content">
+                        <div class="terminal-line"><span class="terminal-prompt">$</span> djinn "find all Python files
+                            modified today"</div>
+                        <div class="terminal-output">→ find . -name "*.py" -mtime 0</div>
+                        <div class="terminal-line"><span class="terminal-prompt">$</span> djinn dashboard</div>
+                        <div class="terminal-output">🚀 Launching System Dashboard...</div>
+                        <div class="terminal-line"><span class="terminal-prompt">$</span> djinn pkg install react</div>
+                        <div class="terminal-output">✅ Detected npm • Installing react...</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="container">
-            <div class="grid">
-                <div class="card">
-                    <h3>Built for Developers</h3>
-                    <p>Stop searching StackOverflow. Just type what you want to do in plain English and let DJINN handle
-                        the rest.</p>
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Everything You Need</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-icon">🤖</div>
+                        <h3>AI-Powered</h3>
+                        <p>Convert natural language to shell commands. Works with Ollama, LM Studio, or OpenAI.</p>
+                        <code>djinn "list docker containers sorted by size"</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📊</div>
+                        <h3>TUI Dashboard</h3>
+                        <p>Full-screen system monitor with CPU, RAM, Disk, Network, and process views.</p>
+                        <code>djinn dashboard</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📦</div>
+                        <h3>Universal Package Manager</h3>
+                        <p>One command for npm, pip, cargo, go, gem, composer, brew. Auto-detects project type.</p>
+                        <code>djinn pkg install react</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🎤</div>
+                        <h3>Voice Control</h3>
+                        <p>Control your terminal with voice commands. Say "git status" and it executes.</p>
+                        <code>djinn voice --listen</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🔍</div>
+                        <h3>AI Code Review</h3>
+                        <p>Get AI-powered feedback on your code changes before committing.</p>
+                        <code>djinn review --staged</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🗄️</div>
+                        <h3>Database Viewer</h3>
+                        <p>Browse SQLite, PostgreSQL, MySQL databases directly in terminal.</p>
+                        <code>djinn db query mydb.sqlite "SELECT * FROM users"</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">🌐</div>
+                        <h3>HTTP Client</h3>
+                        <p>Test APIs with GET, POST, PUT, DELETE. Beautiful response rendering.</p>
+                        <code>djinn http get https://api.github.com</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📁</div>
+                        <h3>File Explorer</h3>
+                        <p>Interactive file manager with cd, ls, tree, mkdir, rm commands.</p>
+                        <code>djinn explore /var/log</code>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Workflow Automation</h3>
+                        <p>Create and run multi-step workflows. Built-in templates for CI/CD.</p>
+                        <code>djinn flow run my-deploy</code>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>87+ Plugins</h3>
-                    <p>Deep integration with AWS, Docker, Kubernetes, Git, Databases, and more. Specialized prompts for
-                        every tool.</p>
+            </div>
+        </section>
+
+        <section class="plugins-overview">
+            <div class="container">
+                <h2 class="section-title">900+ Plugin Templates</h2>
+                <p class="section-subtitle">Pre-built command templates for every tool you use</p>
+                <div class="plugin-grid">
+                    <div class="plugin-card">
+                        <h4>🔒 Security</h4>
+                        <p>Secrets scanning, encryption, firewall, SSL, SSH</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🗃️ Databases</h4>
+                        <p>MySQL, PostgreSQL, MongoDB, Redis, SQLite</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🌐 Networking</h4>
+                        <p>ping, dig, nmap, curl, wget, tcpdump</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>☁️ Cloud</h4>
+                        <p>AWS, GCP, Azure, DigitalOcean, Heroku</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🖥️ SysAdmin</h4>
+                        <p>Processes, services, disk, users, cron</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🐳 Containers</h4>
+                        <p>Docker, Kubernetes, Helm, Podman</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>💻 Development</h4>
+                        <p>Node.js, Python, Go, Rust, Java</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>📚 Git</h4>
+                        <p>120+ advanced Git commands</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>📂 Files</h4>
+                        <p>find, grep, sed, awk, tar, zip</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🔌 API</h4>
+                        <p>HTTP testing, gRPC, WebSocket</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>📈 Monitoring</h4>
+                        <p>top, htop, sar, benchmarks</p>
+                    </div>
+                    <div class="plugin-card">
+                        <h4>🎬 Misc</h4>
+                        <p>FFmpeg, yt-dlp, QR codes, PDF</p>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3>Local First</h3>
-                    <p>Works with Ollama and LM Studio for 100% private, local LLM execution. No API keys required.</p>
+                <a href="plugins.html" class="btn btn-secondary">View All Plugins →</a>
+            </div>
+        </section>
+
+        <section class="quick-start">
+            <div class="container">
+                <h2 class="section-title">Quick Start</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Install DJINN</h4>
+                            <code>pip install djinn-cli</code>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Setup LLM Backend</h4>
+                            <code>djinn config set provider ollama</code>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Start Using</h4>
+                            <code>djinn "your first prompt"</code>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -76,10 +238,10 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 DJINN. Built by <a href="https://boubli.tech">Youssef Boubli</a>.</p>
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a> • MIT License • <a
+                    href="https://github.com/boubli/djinn">GitHub</a></p>
         </div>
     </footer>
-
 </body>
 
 </html>

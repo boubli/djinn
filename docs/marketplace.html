@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugin Marketplace - DJINN</title>
+    <meta name="description" content="DJINN Plugin Marketplace - Browse, install, and share community plugins.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">⚡ DJINN</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="installation.html">Install</a>
+                <a href="commands.html">Commands</a>
+                <a href="plugins.html">Plugins</a>
+                <a href="marketplace.html" class="active">Marketplace</a>
+                <a href="api.html">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="docs-page">
+        <div class="container">
+            <h1>🛒 Plugin Marketplace</h1>
+            <p class="lead">Browse, install, and share community-created plugins.</p>
+
+            <section id="usage">
+                <h2>Using the Marketplace</h2>
+
+                <h3>Browse Available Plugins</h3>
+                <pre>djinn plugin list              # List installed plugins
+djinn plugin browse            # Browse marketplace</pre>
+
+                <h3>Install a Plugin</h3>
+                <pre>djinn plugin install &lt;name&gt;
+djinn plugin install aws-advanced
+djinn plugin install k8s-pro</pre>
+
+                <h3>Uninstall a Plugin</h3>
+                <pre>djinn plugin uninstall &lt;name&gt;</pre>
+
+                <h3>Update Plugins</h3>
+                <pre>djinn plugin update            # Update all
+djinn plugin update &lt;name&gt;     # Update specific</pre>
+            </section>
+
+            <section id="featured">
+                <h2>Featured Plugins</h2>
+
+                <div class="marketplace-grid">
+                    <div class="plugin-card featured">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">☁️</span>
+                            <div>
+                                <h3>aws-advanced</h3>
+                                <span class="plugin-author">by @boubli</span>
+                            </div>
+                            <span class="plugin-badge official">Official</span>
+                        </div>
+                        <p>200+ advanced AWS commands for EC2, S3, Lambda, RDS, ECS, and more.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.9</span>
+                            <span>📥 12.5k</span>
+                            <span>📦 v2.1.0</span>
+                        </div>
+                        <pre>djinn plugin install aws-advanced</pre>
+                    </div>
+
+                    <div class="plugin-card featured">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">🐳</span>
+                            <div>
+                                <h3>docker-pro</h3>
+                                <span class="plugin-author">by @boubli</span>
+                            </div>
+                            <span class="plugin-badge official">Official</span>
+                        </div>
+                        <p>Advanced Docker commands including compose, swarm, buildx, and optimization.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.8</span>
+                            <span>📥 10.2k</span>
+                            <span>📦 v1.5.0</span>
+                        </div>
+                        <pre>djinn plugin install docker-pro</pre>
+                    </div>
+
+                    <div class="plugin-card featured">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">☸️</span>
+                            <div>
+                                <h3>k8s-pro</h3>
+                                <span class="plugin-author">by @boubli</span>
+                            </div>
+                            <span class="plugin-badge official">Official</span>
+                        </div>
+                        <p>Kubernetes power user commands with Helm, ArgoCD, and Istio integration.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.9</span>
+                            <span>📥 8.7k</span>
+                            <span>📦 v2.0.0</span>
+                        </div>
+                        <pre>djinn plugin install k8s-pro</pre>
+                    </div>
+
+                    <div class="plugin-card">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">🔐</span>
+                            <div>
+                                <h3>security-suite</h3>
+                                <span class="plugin-author">by @securitydev</span>
+                            </div>
+                        </div>
+                        <p>Comprehensive security toolkit with vulnerability scanning and hardening.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.7</span>
+                            <span>📥 5.3k</span>
+                            <span>📦 v1.2.0</span>
+                        </div>
+                        <pre>djinn plugin install security-suite</pre>
+                    </div>
+
+                    <div class="plugin-card">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">🗄️</span>
+                            <div>
+                                <h3>database-toolkit</h3>
+                                <span class="plugin-author">by @dbmaster</span>
+                            </div>
+                        </div>
+                        <p>Advanced database management for PostgreSQL, MySQL, MongoDB, Redis.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.6</span>
+                            <span>📥 4.1k</span>
+                            <span>📦 v1.0.3</span>
+                        </div>
+                        <pre>djinn plugin install database-toolkit</pre>
+                    </div>
+
+                    <div class="plugin-card">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">📊</span>
+                            <div>
+                                <h3>monitoring-pro</h3>
+                                <span class="plugin-author">by @opsdev</span>
+                            </div>
+                        </div>
+                        <p>Prometheus, Grafana, and alerting commands for observability.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.5</span>
+                            <span>📥 3.2k</span>
+                            <span>📦 v1.1.0</span>
+                        </div>
+                        <pre>djinn plugin install monitoring-pro</pre>
+                    </div>
+
+                    <div class="plugin-card">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">⚛️</span>
+                            <div>
+                                <h3>react-toolkit</h3>
+                                <span class="plugin-author">by @frontend</span>
+                            </div>
+                        </div>
+                        <p>React, Next.js, and Vite development commands and scaffolding.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.4</span>
+                            <span>📥 2.8k</span>
+                            <span>📦 v1.0.0</span>
+                        </div>
+                        <pre>djinn plugin install react-toolkit</pre>
+                    </div>
+
+                    <div class="plugin-card">
+                        <div class="plugin-header">
+                            <span class="plugin-icon">🐍</span>
+                            <div>
+                                <h3>python-pro</h3>
+                                <span class="plugin-author">by @pydev</span>
+                            </div>
+                        </div>
+                        <p>Python development with FastAPI, Django, Flask, and testing tools.</p>
+                        <div class="plugin-stats">
+                            <span>⭐ 4.6</span>
+                            <span>📥 3.5k</span>
+                            <span>📦 v1.3.0</span>
+                        </div>
+                        <pre>djinn plugin install python-pro</pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="categories">
+                <h2>Browse by Category</h2>
+
+                <div class="category-grid">
+                    <a href="#" class="category-item">
+                        <span class="category-icon">☁️</span>
+                        <span class="category-name">Cloud</span>
+                        <span class="category-count">24 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">🐳</span>
+                        <span class="category-name">Containers</span>
+                        <span class="category-count">18 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">🗄️</span>
+                        <span class="category-name">Databases</span>
+                        <span class="category-count">15 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">🔐</span>
+                        <span class="category-name">Security</span>
+                        <span class="category-count">12 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">💻</span>
+                        <span class="category-name">Development</span>
+                        <span class="category-count">32 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">📊</span>
+                        <span class="category-name">Monitoring</span>
+                        <span class="category-count">9 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">🌐</span>
+                        <span class="category-name">Networking</span>
+                        <span class="category-count">14 plugins</span>
+                    </a>
+                    <a href="#" class="category-item">
+                        <span class="category-icon">🔧</span>
+                        <span class="category-name">DevOps</span>
+                        <span class="category-count">21 plugins</span>
+                    </a>
+                </div>
+            </section>
+
+            <section id="create">
+                <h2>Create Your Own Plugin</h2>
+                <p>Share your commands with the community!</p>
+
+                <h3>Plugin Structure</h3>
+                <pre>my-plugin/
+├── plugin.json        # Plugin metadata
+├── commands.py        # Command definitions
+└── README.md          # Documentation</pre>
+
+                <h3>plugin.json Example</h3>
+                <pre>{
+  "name": "my-awesome-plugin",
+  "version": "1.0.0",
+  "description": "My awesome DJINN plugin",
+  "author": "yourname",
+  "keywords": ["utility", "productivity"],
+  "commands": ["my-command-1", "my-command-2"]
+}</pre>
+
+                <h3>commands.py Example</h3>
+                <pre>from djinn.plugins import Plugin
+
+class MyPlugin(Plugin):
+    name = "my-awesome-plugin"
+    
+    def get_commands(self):
+        return {
+            "greet": "echo 'Hello from my plugin!'",
+            "info": "echo 'Version 1.0.0'"
+        }
+    
+    def generate(self, prompt: str) -> str:
+        if "greet" in prompt:
+            return "echo 'Hello, World!'"
+        return None</pre>
+
+                <h3>Submit to Marketplace</h3>
+                <pre># 1. Create your plugin locally
+mkdir my-plugin && cd my-plugin
+
+# 2. Initialize plugin
+djinn plugin init
+
+# 3. Test locally
+djinn plugin test
+
+# 4. Submit to marketplace
+djinn plugin publish</pre>
+            </section>
+
+            <section id="guidelines">
+                <h2>Plugin Guidelines</h2>
+                <ul>
+                    <li>Plugins must be open source</li>
+                    <li>Include comprehensive documentation</li>
+                    <li>No malicious code or data collection</li>
+                    <li>Follow semantic versioning</li>
+                    <li>Provide examples and tests</li>
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>

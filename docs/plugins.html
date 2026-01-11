@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugins - DJINN</title>
+    <meta name="description"
+        content="900+ plugin templates for DJINN - Security, Databases, Networking, Cloud, DevOps, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo-link">
+                <span class="logo-text">⚡ DJINN</span>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="installation.html">Install</a>
+                <a href="commands.html">Commands</a>
+                <a href="plugins.html" class="active">Plugins</a>
+                <a href="tui.html">TUI</a>
+                <a href="api.html">API</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="docs-page">
+        <div class="container">
+            <h1>🔌 Plugin Library</h1>
+            <p class="lead">900+ pre-built command templates organized in 12 specialized modules</p>
+
+            <section class="plugin-section" id="security">
+                <h2>🔒 Security Plugin</h2>
+                <p>50+ security-focused commands for scanning, encryption, and hardening.</p>
+
+                <h3>Secrets Scanner</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin security scan-secrets</code>
+                        <span>Scan directory for exposed secrets, API keys, passwords</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin security scan-env</code>
+                        <span>Check .env files for sensitive data exposure</span>
+                    </div>
+                </div>
+
+                <h3>Encryption</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin security encrypt file.txt</code>
+                        <span>Encrypt a file with AES-256</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin security hash password</code>
+                        <span>Generate secure password hash</span>
+                    </div>
+                </div>
+
+                <h3>Firewall</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin security firewall status</code>
+                        <span>Check firewall status (ufw/iptables)</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin security firewall allow 80</code>
+                        <span>Allow traffic on port 80</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="database">
+                <h2>🗃️ Database Plugin</h2>
+                <p>60+ commands for MySQL, PostgreSQL, MongoDB, Redis, SQLite, Elasticsearch.</p>
+
+                <h3>MySQL</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin mysql connect</code>
+                        <span>Connect to MySQL database</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin mysql backup dbname</code>
+                        <span>Backup database to SQL file</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin mysql restore dbname backup.sql</code>
+                        <span>Restore from backup</span>
+                    </div>
+                </div>
+
+                <h3>PostgreSQL</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin postgres connect</code>
+                        <span>Connect to PostgreSQL</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin postgres dump</code>
+                        <span>Dump database</span>
+                    </div>
+                </div>
+
+                <h3>MongoDB</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin mongo shell</code>
+                        <span>Open MongoDB shell</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin mongo export collection</code>
+                        <span>Export collection to JSON</span>
+                    </div>
+                </div>
+
+                <h3>Redis</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin redis cli</code>
+                        <span>Open Redis CLI</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin redis keys "*"</code>
+                        <span>List all keys</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="networking">
+                <h2>🌐 Networking Plugin</h2>
+                <p>60+ network diagnostics and administration commands.</p>
+
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin network ping google.com</code>
+                        <span>Ping a host</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin network dig example.com</code>
+                        <span>DNS lookup</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin network nmap 192.168.1.0/24</code>
+                        <span>Network scan</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin network ports</code>
+                        <span>List open ports</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin network bandwidth</code>
+                        <span>Monitor bandwidth usage</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin network tcpdump eth0</code>
+                        <span>Capture network packets</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="cloud">
+                <h2>☁️ Cloud Plugin</h2>
+                <p>80+ commands for AWS, GCP, Azure, DigitalOcean, Heroku, Vercel, Netlify.</p>
+
+                <h3>AWS</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin aws s3 ls</code>
+                        <span>List S3 buckets</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin aws ec2 list</code>
+                        <span>List EC2 instances</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin aws lambda list</code>
+                        <span>List Lambda functions</span>
+                    </div>
+                </div>
+
+                <h3>GCP</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin gcp compute list</code>
+                        <span>List compute instances</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin gcp storage buckets</code>
+                        <span>List storage buckets</span>
+                    </div>
+                </div>
+
+                <h3>Azure</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin azure vm list</code>
+                        <span>List virtual machines</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin azure storage list</code>
+                        <span>List storage accounts</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="containers">
+                <h2>🐳 Containers Plugin</h2>
+                <p>100+ commands for Docker, Kubernetes, Helm, Podman, Docker Compose.</p>
+
+                <h3>Docker</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin docker ps</code>
+                        <span>List running containers</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin docker build .</code>
+                        <span>Build image from Dockerfile</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin docker logs container</code>
+                        <span>View container logs</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin docker exec container bash</code>
+                        <span>Execute command in container</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin docker prune</code>
+                        <span>Clean up unused resources</span>
+                    </div>
+                </div>
+
+                <h3>Kubernetes</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin k8s pods</code>
+                        <span>List pods</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin k8s deploy nginx</code>
+                        <span>Deploy application</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin k8s logs pod-name</code>
+                        <span>View pod logs</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin k8s scale deployment 3</code>
+                        <span>Scale deployment</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="git">
+                <h2>📚 Git Plugin</h2>
+                <p>120+ advanced Git commands for every workflow.</p>
+
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin git status</code>
+                        <span>Repository status</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git log --graph</code>
+                        <span>Visual commit history</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git stash</code>
+                        <span>Stash changes</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git rebase -i HEAD~5</code>
+                        <span>Interactive rebase</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git cherry-pick abc123</code>
+                        <span>Cherry-pick commit</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git bisect start</code>
+                        <span>Binary search for bugs</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin git reflog</code>
+                        <span>View reference log</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="sysadmin">
+                <h2>🖥️ SysAdmin Plugin</h2>
+                <p>80+ system administration commands.</p>
+
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin sys processes</code>
+                        <span>List running processes</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys kill pid</code>
+                        <span>Kill process by PID</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys services</code>
+                        <span>List systemd services</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys disk</code>
+                        <span>Disk usage</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys memory</code>
+                        <span>Memory usage</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys users</code>
+                        <span>List users</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin sys cron list</code>
+                        <span>List cron jobs</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="development">
+                <h2>💻 Development Plugin</h2>
+                <p>100+ commands for Node.js, Python, Go, Rust, Java development.</p>
+
+                <h3>Node.js</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin node init</code>
+                        <span>Initialize package.json</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin node dev</code>
+                        <span>Start dev server</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin node test</code>
+                        <span>Run tests</span>
+                    </div>
+                </div>
+
+                <h3>Python</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin python venv</code>
+                        <span>Create virtual environment</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin python test</code>
+                        <span>Run pytest</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin python lint</code>
+                        <span>Run ruff linter</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-section" id="misc">
+                <h2>🎬 Misc Plugin</h2>
+                <p>70+ miscellaneous commands for multimedia, utilities, and more.</p>
+
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>djinn plugin ffmpeg convert video.mp4 video.webm</code>
+                        <span>Convert video format</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin ytdlp URL</code>
+                        <span>Download video from URL</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin qr "text"</code>
+                        <span>Generate QR code</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin pdf merge *.pdf</code>
+                        <span>Merge PDF files</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin weather</code>
+                        <span>Get weather info</span>
+                    </div>
+                    <div class="command-item">
+                        <code>djinn plugin tmux new session</code>
+                        <span>Create tmux session</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>
