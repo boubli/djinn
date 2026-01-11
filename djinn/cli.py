@@ -65,14 +65,14 @@ def save_config(config: dict):
         json.dump(config, f, indent=2)
 
 
-def auto_detect_backend() -> dict:
-    """Auto-detect available LLM backends and return config."""
+def auto_detect_backend() -> tuple:
+    """Auto-detect available LLM backends and return (config, detected_flag)."""
     import requests
     
     # Check for OpenAI API key first - if found, use it
     api_key = os.environ.get("OPENAI_API_KEY")
     if api_key:
-        return {"backend": "openai", "model": "gpt-4o", "api_key": api_key, "theme": "default"}
+        return {"backend": "openai", "model": "gpt-4o", "api_key": api_key, "theme": "default"}, True
     
     # Check Ollama (default port 11434)
     try:
@@ -80,7 +80,7 @@ def auto_detect_backend() -> dict:
         if r.status_code == 200:
             models = r.json().get("models", [])
             model = models[0]["name"] if models else "llama3.2"
-            return {"backend": "ollama", "model": model, "theme": "default"}
+            return {"backend": "ollama", "model": model, "theme": "default"}, True
     except:
         pass
     
@@ -90,12 +90,12 @@ def auto_detect_backend() -> dict:
         if r.status_code == 200:
             models = r.json().get("data", [])
             model = models[0]["id"] if models else "local-model"
-            return {"backend": "lmstudio", "model": model, "theme": "default"}
+            return {"backend": "lmstudio", "model": model, "theme": "default"}, True
     except:
         pass
     
-    # Default to Ollama (user can start it and change model later)
-    return {"backend": "ollama", "model": "llama3.2", "theme": "default"}
+    # No backend detected - return defaults with False flag
+    return {"backend": "ollama", "model": "llama3.2", "theme": "default"}, False
 
 
 def execute_command(command: str, confirm: bool = True) -> tuple:
@@ -172,10 +172,19 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
     
     # If no config exists, auto-detect LLM backend and create config
     if not config:
-        config = auto_detect_backend()
+        config, detected = auto_detect_backend()
         save_config(config)
-        console.print(f"[success]Auto-detected:[/success] {config.get('backend')} with {config.get('model')}")
-        console.print("[muted]Use 'djinn config' to change settings.[/muted]\n")
+        
+        if detected:
+            console.print(f"[success]✓ Auto-detected:[/success] {config.get('backend')} with {config.get('model')}\n")
+        else:
+            console.print("[warning]⚠ No LLM backend detected![/warning]")
+            console.print("[muted]To use DJINN, set up one of these:[/muted]")
+            console.print("  [cyan]1.[/cyan] Install Ollama: [link]https://ollama.ai[/link]")
+            console.print("     Then run: [bold]ollama serve[/bold] and [bold]ollama pull llama3.2[/bold]")
+            console.print("  [cyan]2.[/cyan] Install LM Studio: [link]https://lmstudio.ai[/link]")
+            console.print("  [cyan]3.[/cyan] Set OPENAI_API_KEY environment variable\n")
+            console.print("[muted]Use 'djinn config' to change settings.[/muted]\n")
 
     # Use CLI args or fall back to config, then defaults
     backend = backend or config.get("backend", "ollama")
