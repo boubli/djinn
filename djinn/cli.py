@@ -134,18 +134,22 @@ def main(ctx, prompt, interactive, execute, yes, backend, model, context, explai
     if ctx.invoked_subcommand is not None:
         return
     
-    # Load config
+    # Load config - use defaults if not set (preserves existing config across updates)
     config = load_config()
     
-    # If no config (first time), run setup
-    if not config and not version:
-        ctx.invoke(setup)
-        config = load_config()
-        if not config: # If user cancelled setup
-            return
+    # If no config exists, create one with defaults (no interactive setup required)
+    if not config:
+        config = {
+            "backend": "ollama",
+            "model": "llama3.2",
+            "theme": "default"
+        }
+        save_config(config)
+        console.print("[muted]Created default config. Use 'djinn config' to customize.[/muted]\n")
 
+    # Use CLI args or fall back to config, then defaults
     backend = backend or config.get("backend", "ollama")
-    model = model or config.get("model")
+    model = model or config.get("model", "llama3.2")
     api_key = config.get("api_key")
     
     # Show logo
