@@ -91,7 +91,8 @@ class ContextAnalyzer:
         
         yield from walk(self.directory, 0)
     
-    def get_context_string(self, max_length: int = 500) -> str:
+    
+    def get_context_string(self, max_length: int = 1500) -> str:
         """Get a formatted context string for LLM prompts."""
         analysis = self.analyze()
         
@@ -113,10 +114,48 @@ class ContextAnalyzer:
         
         if analysis["files"]:
             lines.append(f"Sample files: {', '.join(analysis['files'][:10])}")
+            
+        # Add deep context (file contents)
+        deep_context = self.get_deep_context()
+        if deep_context:
+            lines.append("\nKey File Contents:")
+            lines.append(deep_context)
         
         context = "\n".join(lines)
         return context[:max_length]
     
+    def get_deep_context(self) -> str:
+        """Read content of key files to understand project context."""
+        important_files = [
+            "README.md", "README", "readMe",
+            "package.json", "pyproject.toml", "requirements.txt", "Gemfile", "go.mod", "Cargo.toml",
+            "docker-compose.yml", "Dockerfile",
+            "Makefile", "Justfile",
+            ".env.example"
+        ]
+        
+        contents = []
+        
+        for filename in important_files:
+            file_path = self.directory / filename
+            if file_path.exists() and file_path.is_file():
+                try:
+                    # Read first 500 chars of each file to save tokens
+                    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                        content = f.read(500)
+                        if content.strip():
+                            # Remove excessive whitespace
+                            clean_content = " ".join(content.split())
+                            contents.append(f"--- {filename} ---\n{clean_content}...")
+                except:
+                    pass
+            
+            # Stop if we have enough context
+            if len(contents) >= 3:
+                break
+                
+        return "\n".join(contents)
+
     def detect_shell(self) -> str:
         """Detect the current shell type."""
         if self.system == "Windows":

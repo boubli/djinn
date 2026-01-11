@@ -60,6 +60,77 @@ class ThemeManager:
             "success": "#22C55E",
             "info": "#FFFFFF",
         },
+        # New extended themes
+        "cyberpunk": {
+            "primary": "#ff00ff",
+            "secondary": "#00ffff",
+            "accent": "#ff00ff",
+            "muted": "#666699",
+            "error": "#ff0000",
+            "warning": "#ffff00",
+            "success": "#00ff00",
+            "info": "#9999ff",
+        },
+        "retro": {
+            "primary": "#ffa500",
+            "secondary": "#00ff00",
+            "accent": "#ffa500",
+            "muted": "#808080",
+            "error": "#ff0000",
+            "warning": "#ffff00",
+            "success": "#00ff00",
+            "info": "#ffff00",
+        },
+        "nord": {
+            "primary": "#88c0d0",
+            "secondary": "#81a1c1",
+            "accent": "#88c0d0",
+            "muted": "#4c566a",
+            "error": "#bf616a",
+            "warning": "#ebcb8b",
+            "success": "#a3be8c",
+            "info": "#b48ead",
+        },
+        "dracula": {
+            "primary": "#bd93f9",
+            "secondary": "#ff79c6",
+            "accent": "#bd93f9",
+            "muted": "#6272a4",
+            "error": "#ff5555",
+            "warning": "#f1fa8c",
+            "success": "#50fa7b",
+            "info": "#8be9fd",
+        },
+        "solarized": {
+            "primary": "#268bd2",
+            "secondary": "#2aa198",
+            "accent": "#268bd2",
+            "muted": "#586e75",
+            "error": "#dc322f",
+            "warning": "#b58900",
+            "success": "#859900",
+            "info": "#6c71c4",
+        },
+        "light": {
+            "primary": "#0066cc",
+            "secondary": "#006666",
+            "accent": "#0066cc",
+            "muted": "#666666",
+            "error": "#cc0000",
+            "warning": "#cc6600",
+            "success": "#008800",
+            "info": "#6600cc",
+        },
+        "monokai": {
+            "primary": "#f92672",
+            "secondary": "#66d9ef",
+            "accent": "#ae81ff",
+            "muted": "#75715e",
+            "error": "#f92672",
+            "warning": "#fd971f",
+            "success": "#a6e22e",
+            "info": "#e6db74",
+        },
     }
     
     def __init__(self, theme_name: str = "default"):
@@ -87,3 +158,4 @@ class ThemeManager:
     def list_themes(cls) -> list:
         """List available theme names."""
         return list(cls.THEMES.keys())
+
