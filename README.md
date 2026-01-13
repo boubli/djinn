@@ -263,7 +263,18 @@ Just download and run!
 pip install djinn-cli
 ```
 
-### Option 4: From Source
+### Option 4: Homebrew (macOS/Linux)
+```bash
+brew install --HEAD https://raw.githubusercontent.com/boubli/djinn/master/homebrew/djinn.rb
+```
+
+### Option 5: Docker
+```bash
+docker build -t djinn .
+docker run --rm -it djinn "list files"
+```
+
+### Option 6: From Source
 ```bash
 git clone https://github.com/boubli/djinn
 cd djinn
