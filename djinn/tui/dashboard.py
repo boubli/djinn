@@ -17,10 +17,14 @@ from rich import box
 
 
 class SystemDashboard:
-    """Interactive system monitoring dashboard."""
+    """Interactive system monitoring dashboard with process management."""
     
     def __init__(self):
         self.console = Console()
+        self.selected_idx = 0
+        self.processes: List[Dict] = []
+        self.status_message = ""
+        self.status_style = "dim"
     
     def get_cpu_info(self) -> Dict:
         """Get CPU information."""
@@ -140,22 +144,30 @@ class SystemDashboard:
         return Panel(content, title="🌐 Network", border_style="magenta", box=box.ROUNDED)
     
     def create_process_panel(self, processes: List[Dict]) -> Panel:
-        """Create process panel."""
+        """Create process panel with selection highlight."""
         table = Table(box=None, show_header=True, header_style="bold")
+        table.add_column("", width=2)  # Selection indicator
         table.add_column("PID", width=8)
         table.add_column("Name", width=20)
         table.add_column("CPU%", width=8)
         table.add_column("MEM%", width=8)
         
-        for proc in processes:
+        for i, proc in enumerate(processes):
+            is_selected = i == self.selected_idx
+            indicator = "►" if is_selected else " "
+            style = "bold reverse" if is_selected else ""
+            
             table.add_row(
+                indicator,
                 str(proc['pid']),
                 proc['name'],
                 f"{proc['cpu']:.1f}",
-                f"{proc['mem']:.1f}"
+                f"{proc['mem']:.1f}",
+                style=style
             )
         
-        return Panel(table, title="⚡ Top Processes", border_style="red", box=box.ROUNDED)
+        title = "⚡ Processes [↑↓:nav  K:kill  Q:quit]"
+        return Panel(table, title=title, border_style="red", box=box.ROUNDED)
     
     def create_header(self) -> Panel:
         """Create header panel."""
@@ -166,7 +178,11 @@ class SystemDashboard:
         text = Text()
         text.append("🔮 DJINN Dashboard", style="bold cyan")
         text.append(f"  |  {now}  |  Uptime: {uptime_str}", style="dim")
-        text.append("  |  Press Ctrl+C to exit", style="dim italic")
+        
+        if self.status_message:
+            text.append(f"  |  {self.status_message}", style=self.status_style)
+        else:
+            text.append("  |  Press Q to exit", style="dim italic")
         
         return Panel(text, box=box.MINIMAL)
     
@@ -177,7 +193,7 @@ class SystemDashboard:
         layout.split_column(
             Layout(name="header", size=3),
             Layout(name="main"),
-            Layout(name="footer", size=8),
+            Layout(name="footer", size=10),
         )
         
         layout["main"].split_row(
@@ -203,24 +219,121 @@ class SystemDashboard:
         mem_info = self.get_memory_info()
         disks = self.get_disk_info()
         net_info = self.get_network_info()
-        processes = self.get_top_processes()
+        self.processes = self.get_top_processes()
+        
+        # Clamp selected index
+        if self.processes:
+            self.selected_idx = max(0, min(self.selected_idx, len(self.processes) - 1))
         
         layout["header"].update(self.create_header())
         layout["cpu"].update(self.create_cpu_panel(cpu_info))
         layout["memory"].update(self.create_memory_panel(mem_info))
         layout["disk"].update(self.create_disk_panel(disks))
         layout["network"].update(self.create_network_panel(net_info))
-        layout["footer"].update(self.create_process_panel(processes))
+        layout["footer"].update(self.create_process_panel(self.processes))
     
-    def run(self, refresh_rate: float = 1.0):
-        """Run the dashboard."""
+    def kill_selected_process(self) -> bool:
+        """Kill the currently selected process."""
+        if not self.processes or self.selected_idx >= len(self.processes):
+            return False
+        
+        proc = self.processes[self.selected_idx]
+        pid = proc['pid']
+        name = proc['name']
+        
+        try:
+            p = psutil.Process(pid)
+            p.terminate()
+            self.status_message = f"✓ Killed {name} (PID {pid})"
+            self.status_style = "bold green"
+            return True
+        except psutil.NoSuchProcess:
+            self.status_message = f"Process {pid} no longer exists"
+            self.status_style = "yellow"
+            return False
+        except psutil.AccessDenied:
+            self.status_message = f"✗ Access denied for {name} (PID {pid})"
+            self.status_style = "bold red"
+            return False
+        except Exception as e:
+            self.status_message = f"✗ Error: {e}"
+            self.status_style = "bold red"
+            return False
+    
+    def _get_key(self, timeout: float = 0.1) -> Optional[str]:
+        """Get a keypress without blocking. Returns None if no key pressed."""
+        import sys
+        import select
+        import tty
+        import termios
+        
+        old_settings = termios.tcgetattr(sys.stdin)
+        try:
+            tty.setcbreak(sys.stdin.fileno())
+            
+            rlist, _, _ = select.select([sys.stdin], [], [], timeout)
+            if rlist:
+                ch = sys.stdin.read(1)
+                # Handle escape sequences for arrow keys
+                if ch == '\x1b':
+                    # Read additional characters for escape sequences
+                    rlist2, _, _ = select.select([sys.stdin], [], [], 0.01)
+                    if rlist2:
+                        ch2 = sys.stdin.read(1)
+                        if ch2 == '[':
+                            rlist3, _, _ = select.select([sys.stdin], [], [], 0.01)
+                            if rlist3:
+                                ch3 = sys.stdin.read(1)
+                                if ch3 == 'A':
+                                    return 'UP'
+                                elif ch3 == 'B':
+                                    return 'DOWN'
+                    return 'ESC'
+                return ch
+            return None
+        finally:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+    
+    def run(self, refresh_rate: float = 0.5):
+        """Run the interactive dashboard."""
         layout = self.generate_layout()
+        confirm_kill = False
         
         with Live(layout, console=self.console, refresh_per_second=4, screen=True) as live:
             try:
                 while True:
                     self.update_layout(layout)
-                    time.sleep(refresh_rate)
+                    
+                    # Check for keypress
+                    key = self._get_key(timeout=refresh_rate)
+                    
+                    if key:
+                        if confirm_kill:
+                            # In confirmation mode
+                            if key.lower() == 'y':
+                                self.kill_selected_process()
+                                confirm_kill = False
+                            else:
+                                self.status_message = "Kill cancelled"
+                                self.status_style = "dim"
+                                confirm_kill = False
+                        else:
+                            # Normal mode
+                            if key == 'UP':
+                                self.selected_idx = max(0, self.selected_idx - 1)
+                                self.status_message = ""
+                            elif key == 'DOWN':
+                                self.selected_idx = min(len(self.processes) - 1, self.selected_idx + 1)
+                                self.status_message = ""
+                            elif key.lower() == 'k':
+                                if self.processes and self.selected_idx < len(self.processes):
+                                    proc = self.processes[self.selected_idx]
+                                    self.status_message = f"Kill {proc['name']} (PID {proc['pid']})? [Y/n]"
+                                    self.status_style = "bold yellow"
+                                    confirm_kill = True
+                            elif key.lower() == 'q' or key == 'ESC':
+                                break
+                    
             except KeyboardInterrupt:
                 pass
 
