@@ -4430,5 +4430,30 @@ def ssh_cmd(action, args):
             console.print(f"  🔑 {key}")
 
 
+@main.command()
+@click.argument("subcommand", required=False)
+@click.argument("args", nargs=-1)
+def market(subcommand, args):
+    """
+    Plugin Marketplace (Beta).
+    
+    Commands:
+        list        List available plugins
+        install     Install a plugin by name
+    """
+    from djinn.core.marketplace import Marketplace
+    market = Marketplace()
+    
+    if not subcommand or subcommand == "list":
+        market.list_plugins()
+    elif subcommand == "install":
+        if not args:
+            console.print("[red]Usage: djinn market install <name>[/red]")
+            return
+        market.install_plugin(args[0])
+    else:
+        console.print(f"[red]Unknown market command: {subcommand}[/red]")
+        console.print("Try: list, install")
+
 if __name__ == "__main__":
     main()

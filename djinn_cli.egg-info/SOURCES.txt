@@ -47,6 +47,7 @@ djinn/core/specialized.py
 djinn/core/stats.py
 djinn/core/sync.py
 djinn/core/sysadmin.py
+djinn/core/update_checker.py
 djinn/core/vault.py
 djinn/core/visualizer.py
 djinn/core/webutils.py

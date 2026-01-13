@@ -1,0 +1,16 @@
+{
+    "plugins": {
+        "hello-world": {
+            "description": "A simple example plugin that says hello.",
+            "author": "Djinn Team",
+            "url": "https://raw.githubusercontent.com/boubli/djinn/master/examples/plugins/hello_world.py",
+            "version": "1.0.0"
+        },
+        "system-monitor": {
+            "description": "Advanced system monitoring tool (CPU, RAM, Disk).",
+            "author": "Community",
+            "url": "https://raw.githubusercontent.com/boubli/djinn/master/examples/plugins/monitor.py",
+            "version": "0.5.0"
+        }
+    }
+}
