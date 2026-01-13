@@ -3,7 +3,7 @@ class DjinnCli < Formula
 
   desc "AI-powered CLI that converts natural language to shell commands"
   homepage "https://github.com/boubli/djinn"
-  url "https://files.pythonhosted.org/packages/source/d/djinn-cli/djinn_cli-2.1.0.tar.gz"
+  url "https://github.com/boubli/djinn/releases/download/v2.1.0/djinn_cli-2.1.0.tar.gz"
   sha256 "1782131aa4cd6f6d616b82f4f6a8b836f2e0f57f4dc1b41a3aff82f0509a6faf"
   license "MIT"
 
