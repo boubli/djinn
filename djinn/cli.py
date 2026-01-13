@@ -129,92 +129,119 @@ def execute_command(command: str, confirm: bool = True) -> tuple:
         return False, str(e)
 
 
-@click.group(invoke_without_command=True)
-@click.argument("prompt", nargs=-1, required=False)
+class DjinnGroup(click.Group):
+    """Custom Click Group to handle natural language prompts as the default command."""
+    
+    def parse_args(self, ctx, args):
+        if args and args[0] in self.commands:
+            return super().parse_args(ctx, args)
+        
+        # If the first arg is NOT a subcommand, we treat everything as a "summon" command
+        # But we need to check if there are any flags that belong to the group itself (-v, -i, etc)
+        # Standard click parsing is tricky here. 
+        # Strategy: attempt to parse options. If we see a non-option that is NOT a command, 
+        # assume it's the start of the prompt for the default command.
+        return super().parse_args(ctx, args)
+
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        # No subcommand found. Check if it's a known option or version flag
+        # If not, return the default 'summon' command
+        return self.get_command(ctx, "summon")
+
+    def resolve_command(self, ctx, args):
+        # Check if the first argument is a known subcommand
+        # We use a protected method _get_command if available or just check list
+        cmd_name = args[0] if args else ""
+        
+        # If it's a known command (or help/version flag which usually handled before), route to it
+        if cmd_name in self.commands:
+            return super().resolve_command(ctx, args)
+            
+        # If not a known command, we assume it's a prompt for 'summon'
+        # We return 'summon' as the command name, the summon command object, and ALL args
+        # This prevents the first word from being consumed as the command name
+        summon_cmd = self.get_command(ctx, "summon")
+        return "summon", summon_cmd, args
+
+
+@click.group(cls=DjinnGroup, invoke_without_command=True)
 @click.option("-i", "--interactive", is_flag=True, help="Interactive mode")
+@click.option("--mini", is_flag=True, help="Use mini logo")
+@click.option("-v", "--version", is_flag=True, help="Show version")
+@click.pass_context
+def main(ctx, interactive, mini, version):
+    """
+    DJINN - Terminal Sorcery at Your Command
+    """
+    if version:
+        console.print(f"[highlight]DJINN[/highlight] version [success]{__version__}[/success]")
+        ctx.exit()
+    
+    # If a subcommand (like config, or summon) is about to run, let it
+    if ctx.invoked_subcommand is not None:
+        return
+
+    # Check for updates on startup (non-blocking if possible, but here synchronous with short timeout)
+    # Only check if not running a subcommand to avoid slowing down "djinn alias" etc.
+    from djinn.core.update_checker import check_for_updates
+    check_for_updates()
+
+    # If no subcommand, and no interactive flag, we default to interactive ONLY if no args were passed
+    # But DjinnGroup logic should have routed args to 'summon' already if they existed.
+    # So if we are here, it means we are just `djinn` or `djinn -i`
+    
+    # Load config
+    config = load_config()
+    if not config:
+        config, detected = auto_detect_backend()
+        save_config(config)
+        if detected:
+            console.print(f"[success]✓ Auto-detected:[/success] {config.get('backend')} with {config.get('model')}\n")
+        else:
+            console.print("[warning]⚠ No LLM backend detected![/warning]")
+    
+    # Defaults
+    backend = config.get("backend", "ollama")
+    model = config.get("model", "llama3.2")
+    api_key = config.get("api_key")
+
+    set_console_title()
+    Logo.print_logo(console, mini=mini)
+
+    # Interactive mode check
+    if interactive or getattr(sys, 'frozen', False):
+         run_interactive(backend, model, context=True, api_key=api_key)
+    else:
+        # Show help if run without args (and not interactive)
+        console.print("\n[muted]Usage: djinn \"your command description\"[/muted]")
+        console.print("[muted]       djinn [command] (config, history, etc)[/muted]\n")
+
+
+@main.command(name="summon", hidden=True)
+@click.argument("prompt", nargs=-1, required=True)
 @click.option("-x", "--execute", is_flag=True, help="Execute the command directly")
 @click.option("-y", "--yes", is_flag=True, help="Skip confirmation (use with -x)")
 @click.option("-b", "--backend", type=click.Choice(["ollama", "lmstudio", "openai"]), help="LLM backend")
 @click.option("-m", "--model", help="Model name")
 @click.option("-c", "--context/--no-context", default=True, help="Use directory context")
 @click.option("-e", "--explain", is_flag=True, help="Explain the command")
-@click.option("--mini", is_flag=True, help="Use mini logo")
-@click.option("-v", "--version", is_flag=True, help="Show version")
-@click.pass_context
-def main(ctx, prompt, interactive, execute, yes, backend, model, context, explain, mini, version):
-    """
-    DJINN - Terminal Sorcery at Your Command
-    
-    Convert natural language to shell commands using AI.
-    
-    Examples:
-        djinn "list all files larger than 100MB"
-        djinn -x "delete temp files"          # Execute directly
-        djinn -x -y "create backup folder"    # Execute without confirmation
-        djinn @cleanup                        # Use saved alias
-    
-    Commands:
-        djinn alias add/remove/list           # Manage aliases
-        djinn explain "command"               # Explain a command
-        djinn history                         # View history
-        djinn config --show                   # View config
-    """
-    if version:
-        console.print(f"[highlight]DJINN[/highlight] version [success]{__version__}[/success]")
-        return
-    
-    # If a subcommand was invoked, let it handle things
-    if ctx.invoked_subcommand is not None:
-        return
-    
-    # Load config - use defaults if not set (preserves existing config across updates)
+def summon(prompt, execute, yes, backend, model, context, explain):
+    """(Hidden) Default command to handle natural language prompts."""
     config = load_config()
-    
-    # If no config exists, auto-detect LLM backend and create config
-    if not config:
-        config, detected = auto_detect_backend()
-        save_config(config)
-        
-        if detected:
-            console.print(f"[success]✓ Auto-detected:[/success] {config.get('backend')} with {config.get('model')}\n")
-        else:
-            console.print("[warning]⚠ No LLM backend detected![/warning]")
-            console.print("[muted]To use DJINN, set up one of these:[/muted]")
-            console.print("  [cyan]1.[/cyan] Install Ollama: [link]https://ollama.ai[/link]")
-            console.print("     Then run: [bold]ollama serve[/bold] and [bold]ollama pull llama3.2[/bold]")
-            console.print("  [cyan]2.[/cyan] Install LM Studio: [link]https://lmstudio.ai[/link]")
-            console.print("  [cyan]3.[/cyan] Set OPENAI_API_KEY environment variable\n")
-            console.print("[muted]Use 'djinn config' to change settings.[/muted]\n")
-
-    # Use CLI args or fall back to config, then defaults
     backend = backend or config.get("backend", "ollama")
     model = model or config.get("model", "llama3.2")
     api_key = config.get("api_key")
     
-    # Show logo
-    set_console_title()
-    Logo.print_logo(console, mini=mini)
+    prompt_text = " ".join(prompt)
     
-    if interactive:
-        run_interactive(backend, model, context, api_key)
-    elif prompt:
-        prompt_text = " ".join(prompt)
-        
-        # Resolve aliases
-        alias_mgr = AliasManager()
-        prompt_text = alias_mgr.resolve(prompt_text)
-        
-        run_single(prompt_text, backend, model, context, explain, execute, not yes, api_key)
-    else:
-        # If running as a frozen executable (EXE) and no args, enter interactive mode automatically
-        if getattr(sys, 'frozen', False):
-            run_interactive(backend, model, context)
-        else:
-            # Show help
-            console.print("\n[muted]Usage: djinn \"your command description\"[/muted]")
-            console.print("[muted]       djinn -x \"command\" (execute directly)[/muted]")
-            console.print("[muted]       djinn -i  (interactive mode)[/muted]")
-            console.print("[muted]       djinn --help  (all options)[/muted]\n")
+    # Resolve aliases
+    alias_mgr = AliasManager()
+    prompt_text = alias_mgr.resolve(prompt_text)
+    
+    run_single(prompt_text, backend, model, context, explain, execute, not yes, api_key)
 
 
 def run_single(prompt: str, backend: str, model: str, use_context: bool, explain: bool, execute: bool, confirm: bool, api_key: str = None):

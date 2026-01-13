@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: djinn-cli
-Version: 2.1.0
+Version: 2.1.1
 Summary: ⚡ DJINN - AI-powered CLI that converts natural language to shell commands. 87 specialized commands for DevOps, Cloud, Databases, and more.
 Author-email: Youssef Boubli <bbb.vloger@gmail.com>
 License: MIT
@@ -36,15 +36,15 @@ Requires-Dist: ruff; extra == "dev"
 Dynamic: license-file
 
 <p align="center">
-  <img src="assets/djinn_logo.png" alt="DJINN Logo" width="200">
+  <img src="assets/djinn_logo.png" alt="DJINN CLI Logo - AI Terminal Assistant" width="200">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-green" alt="Version">
-  <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-purple" alt="License">
-  <img src="https://img.shields.io/badge/commands-60+-orange" alt="Commands">
-  <img src="https://img.shields.io/badge/plugins-900+-red" alt="Plugins">
+  <img src="https://img.shields.io/badge/version-2.1.1-green" alt="DJINN Version 2.1.1">
+  <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Supports Python 3.8 and newer">
+  <img src="https://img.shields.io/badge/license-MIT-purple" alt="MIT License">
+  <img src="https://img.shields.io/badge/commands-60+-orange" alt="Over 60 built-in commands">
+  <img src="https://img.shields.io/badge/plugins-900+-red" alt="900+ plugin templates available">
 </p>
 
 <h1 align="center">⚡ DJINN</h1>
@@ -280,15 +280,38 @@ djinn model download codellama      # Download model
 
 ## 📦 Installation
 
-### Option 1: Windows Executable
-Download `djinn.exe` from [Releases](https://github.com/boubli/djinn/releases).
+### Option 1: Automated Script (Recommended)
+**Windows (PowerShell):**
+```powershell
+powershell -c "irm https://raw.githubusercontent.com/boubli/djinn/master/install.ps1 | iex"
+```
 
-### Option 2: Python Package
+**Linux/Mac:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/boubli/djinn/master/install.sh | bash
+```
+
+### Option 2: Standalone Executable (No Python Required)
+Download the latest binaries for Windows (`.exe`), macOS, and Linux from [GitHub Releases](https://github.com/boubli/djinn/releases).
+Just download and run!
+
+### Option 3: Python Package (Pip)
 ```bash
 pip install djinn-cli
 ```
 
-### Option 3: From Source
+### Option 4: Homebrew (macOS/Linux)
+```bash
+brew install --HEAD https://raw.githubusercontent.com/boubli/djinn/master/homebrew/djinn.rb
+```
+
+### Option 5: Docker
+```bash
+docker build -t djinn .
+docker run --rm -it djinn "list files"
+```
+
+### Option 6: From Source
 ```bash
 git clone https://github.com/boubli/djinn
 cd djinn
