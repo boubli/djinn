@@ -254,15 +254,16 @@ powershell -c "irm https://raw.githubusercontent.com/boubli/djinn/master/install
 curl -fsSL https://raw.githubusercontent.com/boubli/djinn/master/install.sh | bash
 ```
 
-### Option 2: Windows Executable
-Download `djinn.exe` from [Releases](https://github.com/boubli/djinn/releases).
+### Option 2: Standalone Executable (No Python Required)
+Download the latest binaries for Windows (`.exe`), macOS, and Linux from [GitHub Releases](https://github.com/boubli/djinn/releases).
+Just download and run!
 
-### Option 2: Python Package
+### Option 3: Python Package (Pip)
 ```bash
 pip install djinn-cli
 ```
 
-### Option 3: From Source
+### Option 4: From Source
 ```bash
 git clone https://github.com/boubli/djinn
 cd djinn
