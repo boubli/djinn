@@ -39,7 +39,7 @@ services:
       - ./html:/usr/share/nginx/html
     restart: unless-stopped
 """,
-        "postgres": """
+        "postgres": r"""
 services:
   db:
     image: postgres:16-alpine
@@ -75,7 +75,7 @@ services:
 volumes:
   redis_data:
 """,
-        "mongodb": """
+        "mongodb": r"""
 services:
   mongo:
     image: mongo:7
@@ -91,7 +91,7 @@ services:
 volumes:
   mongo_data:
 """,
-        "wordpress": """
+        "wordpress": r"""
 services:
   wordpress:
     image: wordpress:latest
@@ -154,7 +154,7 @@ services:
 volumes:
   mongo_data:
 """,
-        "monitoring": """
+        "monitoring": r"""
 services:
   prometheus:
     image: prom/prometheus:latest

@@ -243,7 +243,18 @@ djinn model download codellama      # Download model
 
 ## 📦 Installation
 
-### Option 1: Windows Executable
+### Option 1: Automated Script (Recommended)
+**Windows (PowerShell):**
+```powershell
+powershell -c "irm https://raw.githubusercontent.com/boubli/djinn/master/install.ps1 | iex"
+```
+
+**Linux/Mac:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/boubli/djinn/master/install.sh | bash
+```
+
+### Option 2: Windows Executable
 Download `djinn.exe` from [Releases](https://github.com/boubli/djinn/releases).
 
 ### Option 2: Python Package
