@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="assets/djinn_logo.png" alt="DJINN Logo" width="200">
+  <img src="assets/djinn_logo.png" alt="DJINN CLI Logo - AI Terminal Assistant" width="200">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-green" alt="Version">
-  <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Python">
-  <img src="https://img.shields.io/badge/license-MIT-purple" alt="License">
-  <img src="https://img.shields.io/badge/commands-60+-orange" alt="Commands">
-  <img src="https://img.shields.io/badge/plugins-900+-red" alt="Plugins">
+  <img src="https://img.shields.io/badge/version-2.1.1-green" alt="DJINN Version 2.1.1">
+  <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Supports Python 3.8 and newer">
+  <img src="https://img.shields.io/badge/license-MIT-purple" alt="MIT License">
+  <img src="https://img.shields.io/badge/commands-60+-orange" alt="Over 60 built-in commands">
+  <img src="https://img.shields.io/badge/plugins-900+-red" alt="900+ plugin templates available">
 </p>
 
 <h1 align="center">⚡ DJINN</h1>
