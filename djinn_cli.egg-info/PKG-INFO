@@ -1,13 +1,13 @@
 Metadata-Version: 2.4
 Name: djinn-cli
-Version: 1.0.0
-Summary: 🧞 Djinn - A Moroccan-styled terminal assistant that converts natural language to shell commands
+Version: 2.1.0
+Summary: ⚡ DJINN - AI-powered CLI that converts natural language to shell commands. 87 specialized commands for DevOps, Cloud, Databases, and more.
 Author-email: Youssef Boubli <bbb.vloger@gmail.com>
 License: MIT
 Project-URL: Homepage, https://boubli.tech
 Project-URL: Repository, https://github.com/boubli/djinn
 Project-URL: Issues, https://github.com/boubli/djinn/issues
-Keywords: cli,terminal,ai,llm,shell,commands,ollama,morocco
+Keywords: cli,terminal,ai,llm,shell,commands,ollama,devops,automation
 Classifier: Development Status :: 4 - Beta
 Classifier: Environment :: Console
 Classifier: Intended Audience :: Developers
@@ -22,6 +22,7 @@ Classifier: Programming Language :: Python :: 3.12
 Classifier: Topic :: Utilities
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: click>=8.0
 Requires-Dist: rich>=13.0
 Requires-Dist: requests>=2.28
@@ -32,216 +33,287 @@ Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: black; extra == "dev"
 Requires-Dist: ruff; extra == "dev"
-
-# 🧞 Djinn (جن)
+Dynamic: license-file
 
 <p align="center">
-  <img src="assets/djinn_logo.png" alt="Djinn Logo" width="400">
+  <img src="assets/djinn_logo.png" alt="DJINN Logo" width="200">
 </p>
 
 <p align="center">
-  <strong>A Moroccan-styled terminal assistant that converts natural language to shell commands</strong>
+  <img src="https://img.shields.io/badge/version-2.0.0-green" alt="Version">
+  <img src="https://img.shields.io/badge/python-3.8+-blue" alt="Python">
+  <img src="https://img.shields.io/badge/license-MIT-purple" alt="License">
+  <img src="https://img.shields.io/badge/commands-60+-orange" alt="Commands">
+  <img src="https://img.shields.io/badge/plugins-900+-red" alt="Plugins">
 </p>
 
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#backends">Backends</a> •
-  <a href="#languages">Languages</a>
-</p>
+<h1 align="center">⚡ DJINN</h1>
+<h3 align="center">The Ultimate AI-Powered CLI Tool</h3>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License">
-  <img src="https://img.shields.io/badge/made_in-Morocco-red.svg" alt="Made in Morocco">
+  <b>Transform natural language into precise shell commands with 60+ built-in commands and 900+ plugin templates.</b><br>
+  TUI Dashboard • Universal Package Manager • Voice Control • AI Code Reviewer
 </p>
 
 ---
 
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 🔧 **Multi-LLM** | Supports Ollama, LM Studio, and OpenAI |
-| 📜 **History** | SQLite-backed command history with favorites |
-| 📂 **Context Aware** | Analyzes your directory for smarter commands |
-| 💬 **Interactive** | Chat mode to refine commands |
-| 🎨 **Rich UI** | Beautiful spinners, colors, and syntax highlighting |
-| 📦 **Installable** | Install globally with `pip install .` |
-| 🌐 **Multi-Language** | Supports Arabic (العربية), French, English |
-
----
-
-## 🚀 Installation
-
-### Prerequisites
-
-1. **Python 3.8+**
-2. **Ollama** (recommended) — [Install Ollama](https://ollama.ai)
-   ```bash
-   ollama pull llama3.2-vision
-   ```
-
-### Install Djinn
+## 🚀 Quick Start
 
 ```bash
-# Clone or navigate to the project
-cd ghost
+# Install from PyPI
+pip install djinn-cli
 
-# Install globally
-pip install -e .
-
-# Verify installation
-djinn --version
+# Or download the Windows executable
+# https://github.com/boubli/djinn/releases
 ```
 
----
-
-## 📖 Usage
-
-### Quick Command
-
 ```bash
-djinn "list all files larger than 100MB"
-```
+# Your first command
+djinn "list all docker containers sorted by size"
 
-### Interactive Mode
-
-```bash
+# Interactive mode
 djinn -i
 ```
 
-```
-djinn > convert all mov files to mp4
-✓ Command: for f in *.mov; do ffmpeg -i "$f" "${f%.mov}.mp4"; done
-📋 Copied to clipboard!
+---
 
-djinn > refine use parallel processing
-✓ Command: parallel ffmpeg -i {} -c:v libx264 {.}.mp4 ::: *.mov
-📋 Copied to clipboard!
-```
+## ✨ Features Overview
 
-### Multi-Language
+### 🤖 Core AI Commands
+| Command | Description |
+|---------|-------------|
+| `djinn "prompt"` | Convert natural language to shell command |
+| `djinn -i` | Interactive chat mode |
+| `djinn explain "cmd"` | Explain any command in detail |
+| `djinn redo` | Regenerate last command |
+| `djinn alias` | Manage command aliases |
 
+### 📊 TUI (Full-Screen Interactive)
+| Command | Description |
+|---------|-------------|
+| `djinn dashboard` | System monitor (CPU, RAM, Disk, Network) |
+| `djinn explore` | Interactive file manager |
+| `djinn db connect file.db` | Database viewer (SQLite/PostgreSQL/MySQL) |
+| `djinn http get URL` | API testing client |
+
+### 📦 Universal Tools
+| Command | Description |
+|---------|-------------|
+| `djinn pkg install X` | Smart package manager (npm/pip/cargo/go/gem) |
+| `djinn setup new node` | Project templates |
+| `djinn flow run my-build` | Workflow automation |
+| `djinn env list` | .env file management |
+
+### 🧠 AI & Automation
+| Command | Description |
+|---------|-------------|
+| `djinn voice` | Voice control (speech recognition) |
+| `djinn review` | AI-powered code reviewer |
+| `djinn docs readme` | Auto-generate documentation |
+| `djinn why "error"` | Explain why commands fail |
+
+### 🔧 DevOps & Plugins
+| Command | Description |
+|---------|-------------|
+| `djinn cheat docker` | Built-in cheatsheets |
+| `djinn compose generate` | Docker Compose generator |
+| `djinn scan` | Dependency vulnerability scanner |
+| `djinn release bump minor` | Git release automation |
+
+### 🎯 Productivity
+| Command | Description |
+|---------|-------------|
+| `djinn learn shortcut` | Save personalized shortcuts |
+| `djinn schedule add cmd +1h` | Schedule commands |
+| `djinn record start` | Record terminal sessions |
+| `djinn ssh list` | SSH connection manager |
+
+### 🎮 Fun & Learning
+| Command | Description |
+|---------|-------------|
+| `djinn game typing` | CLI typing practice |
+| `djinn game quiz` | Test your CLI knowledge |
+| `djinn speak "message"` | Text-to-speech |
+
+---
+
+## � Complete Command Reference
+
+### AI Commands
 ```bash
-# Arabic
-djinn --lang ar "أنشئ مجلد جديد باسم مشروع"
-
-# French
-djinn --lang fr "supprimer tous les fichiers temporaires"
+djinn "natural language prompt"     # Generate command
+djinn -i                            # Interactive mode
+djinn explain "git rebase -i"       # Explain command
+djinn suggest                       # Context suggestions
+djinn redo                          # Regenerate last
+djinn translate "cmd" --to bash     # Translate between shells
 ```
 
-### View History
-
+### Plugin Commands (900+ Templates)
 ```bash
-djinn history              # Recent commands
-djinn history --favorites  # Favorite commands
-djinn history --search "docker"
+djinn plugin docker ps              # Docker commands
+djinn plugin aws s3 ls              # AWS commands
+djinn plugin k8s get pods           # Kubernetes
+djinn plugin git log                # Git commands
+djinn plugin security scan          # Security tools
 ```
 
 ### Configuration
+```bash
+djinn config set provider ollama    # Set LLM provider
+djinn config set model llama3       # Set model
+djinn theme list                    # List themes
+djinn theme set cyberpunk           # Set theme
+```
+
+### System Dashboard
+```bash
+djinn dashboard                     # Launch system monitor
+# Shows: CPU usage, RAM, Disk space, Network I/O, Top processes
+# Press Ctrl+C to exit
+```
+
+### Package Manager
+```bash
+djinn pkg info                      # Show detected manager
+djinn pkg install react             # Auto-detects npm/pip/cargo
+djinn pkg install flask -D          # Dev dependency
+djinn pkg list                      # List packages
+djinn pkg outdated                  # Check outdated
+```
+
+### Database Viewer
+```bash
+djinn db connect mydb.sqlite        # Connect to SQLite
+djinn db tables mydb.sqlite         # List tables
+djinn db query mydb.sqlite "SELECT * FROM users LIMIT 10"
+```
+
+### HTTP Client
+```bash
+djinn http get https://api.github.com
+djinn http post https://api.example.com -d '{"name":"test"}'
+djinn http get URL -H "Authorization:Bearer token"
+```
+
+### File Explorer
+```bash
+djinn explore                       # Launch file explorer
+djinn explore /var/log              # Start in specific path
+# Commands: ls, cd, tree, mkdir, rm, pwd, q
+```
+
+### Voice Control
+```bash
+djinn voice                         # Single voice command
+djinn voice --listen                # Continuous listening
+# Say: "list files", "git status", "docker containers"
+```
+
+### Code Review
+```bash
+djinn review                        # Review uncommitted changes
+djinn review --staged               # Review staged only
+djinn review file.py                # Review specific file
+```
+
+### Project Architect
+```bash
+djinn architect list                # List templates
+djinn architect create fullstack-react-node myapp
+djinn architect stacks              # Quick stack templates
+djinn setup new fastapi             # Quick setup
+```
+
+### Workflows
+```bash
+djinn flow templates                # List templates
+djinn flow create my-deploy         # Create workflow
+djinn flow run my-deploy            # Run workflow
+djinn flow run my-deploy --dry-run  # Preview
+```
+
+### Environment Management
+```bash
+djinn env list                      # List .env variables
+djinn env get API_KEY               # Get variable
+djinn env set API_KEY value         # Set variable
+djinn env backup                    # Backup .env
+djinn dotfiles backup               # Backup dotfiles
+```
+
+### Scheduling
+```bash
+djinn schedule add "npm test" +1h   # Run in 1 hour
+djinn schedule add "backup" +30m    # Run in 30 min
+djinn schedule list                 # List pending
+djinn schedule run                  # Run due tasks
+```
+
+### SSH Manager
+```bash
+djinn ssh list                      # List connections
+djinn ssh add server host user      # Add connection
+djinn ssh keys                      # List SSH keys
+```
+
+---
+
+## � LLM Providers
+
+DJINN supports multiple AI backends:
+
+| Provider | Local | Setup |
+|----------|-------|-------|
+| **Ollama** | ✅ | `ollama serve` |
+| **LM Studio** | ✅ | Start local server |
+| **OpenAI** | ❌ | Set `OPENAI_API_KEY` |
 
 ```bash
-djinn config --backend ollama     # Set default backend
-djinn config --model gpt-4        # Set default model
-djinn config --lang ar            # Set default language
-djinn config --show               # Show current config
+djinn config set provider ollama
+djinn config set model llama3.2
+djinn model list                    # List installed models
+djinn model download codellama      # Download model
 ```
 
 ---
 
-## 🔧 Backends
+## 📦 Installation
 
-| Backend | URL | Setup |
-|---------|-----|-------|
-| **Ollama** | `localhost:11434` | `ollama serve` |
-| **LM Studio** | `localhost:1234` | Start LM Studio with server enabled |
-| **OpenAI** | `api.openai.com` | Set `OPENAI_API_KEY` env variable |
+### Option 1: Windows Executable
+Download `djinn.exe` from [Releases](https://github.com/boubli/djinn/releases).
+
+### Option 2: Python Package
+```bash
+pip install djinn-cli
+```
+
+### Option 3: From Source
+```bash
+git clone https://github.com/boubli/djinn
+cd djinn
+pip install -e .
+```
+
+---
+
+## 🎨 Themes
 
 ```bash
-# Use a specific backend
-djinn -b lmstudio "find all python files"
-djinn -b openai -m gpt-4 "optimize this query"
+djinn theme list                    # Available themes
+djinn theme set <theme>             # Set theme
 ```
 
----
-
-## 🌐 Languages
-
-Djinn supports input and output in multiple languages:
-
-- 🇬🇧 **English** (default)
-- 🇲🇦 **Arabic** (العربية) — `--lang ar`
-- 🇫🇷 **French** (Français) — `--lang fr`
-
----
-
-## 🎨 Demo
-
-```
-    ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-    │                                               │
-    │    ██████╗      ██╗██╗███╗   ██╗███╗   ██╗    │
-    │    ██╔══██╗     ██║██║████╗  ██║████╗  ██║    │
-    │    ██║  ██║     ██║██║██╔██╗ ██║██╔██╗ ██║    │
-    │    ██║  ██║██   ██║██║██║╚██╗██║██║╚██╗██║    │
-    │    ██████╔╝╚█████╔╝██║██║ ╚████║██║ ╚████║    │
-    │    ╚═════╝  ╚════╝ ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝    │
-    │                     جن                        │
-    │                                               │
-    │      ✦ Terminal Command Generator ✦          │
-    │                                               │
-    ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-
-▶ Intent: compress all images in this folder
-
-⚡ Summoning command...
-
-✓ Command generated:
-  find . -type f \( -name "*.jpg" -o -name "*.png" \) -exec convert {} -quality 80 {} \;
-
-📋 Copied to clipboard!
-```
-
----
-
-## 📁 Project Structure
-
-```
-ghost/
-├── djinn/
-│   ├── __init__.py
-│   ├── cli.py              # Main CLI
-│   ├── core/
-│   │   ├── engine.py       # LLM orchestration
-│   │   ├── history.py      # SQLite history
-│   │   └── context.py      # Directory analysis
-│   ├── backends/
-│   │   ├── ollama.py
-│   │   ├── lmstudio.py
-│   │   └── openai_backend.py
-│   ├── ui/
-│   │   ├── logo.py
-│   │   ├── spinner.py
-│   │   └── theme.py
-│   └── i18n/
-│       ├── en.json
-│       ├── ar.json
-│       └── fr.json
-├── pyproject.toml
-└── README.md
-```
+Available: `default`, `cyberpunk`, `retro`, `nord`, `dracula`, `solarized`, `monokai`, `light`
 
 ---
 
 ## 📄 License
 
-MIT License — Free to use and modify.
+MIT License - © 2026 [Youssef Boubli](https://boubli.tech)
 
 ---
 
 <p align="center">
-  Made with ❤️ in Morocco 🇲🇦 by <a href="https://boubli.tech">Youssef Boubli</a><br>
-  <a href="https://github.com/boubli">GitHub</a> • <a href="https://boubli.tech">Website</a>
+  <b>Built with ⚡ by <a href="https://boubli.tech">Youssef Boubli</a></b>
 </p>
