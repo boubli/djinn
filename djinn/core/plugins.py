@@ -83,7 +83,7 @@ Examples:
 class ChainPlugin:
     """Generate multi-step command chains."""
     
-    SYSTEM_PROMPT = """You are a shell scripting expert. Convert the user's multi-step task into a chained command.
+    SYSTEM_PROMPT = r"""You are a shell scripting expert. Convert the user's multi-step task into a chained command.
 
 Rules:
 - Output commands chained with && (or ; if order doesn't matter)
