@@ -169,17 +169,23 @@ class DjinnGroup(click.Group):
         return "summon", summon_cmd, args
 
 
-@click.group(cls=DjinnGroup, invoke_without_command=True)
+@click.group(cls=DjinnGroup, invoke_without_command=True, add_help_option=False)
 @click.option("-i", "--interactive", is_flag=True, help="Interactive mode")
 @click.option("--mini", is_flag=True, help="Use mini logo")
 @click.option("-v", "--version", is_flag=True, help="Show version")
+@click.option("-h", "--help", is_flag=True, help="Show interactive help")
 @click.pass_context
-def main(ctx, interactive, mini, version):
+def main(ctx, interactive, mini, version, help):
     """
     DJINN - Terminal Sorcery at Your Command
     """
     if version:
         console.print(f"[highlight]DJINN[/highlight] version [success]{__version__}[/success]")
+        ctx.exit()
+    
+    if help:
+        from djinn.tui.help_navigator import launch_help
+        launch_help()
         ctx.exit()
     
     # If a subcommand (like config, or summon) is about to run, let it
@@ -217,9 +223,10 @@ def main(ctx, interactive, mini, version):
     if interactive or getattr(sys, 'frozen', False):
          run_interactive(backend, model, context=True, api_key=api_key)
     else:
-        # Show help if run without args (and not interactive)
-        console.print("\n[muted]Usage: djinn \"your command description\"[/muted]")
-        console.print("[muted]       djinn [command] (config, history, etc)[/muted]\n")
+        # Default with no args: Launch Interactive Help / Dashboard
+        # This satisfies "stay in djinn" and "category" logic
+        from djinn.tui.help_navigator import launch_help
+        launch_help()
 
 
 @main.command(name="summon", hidden=True)
