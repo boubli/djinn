@@ -54,8 +54,10 @@ def load_config() -> dict:
         try:
             with open(config_path) as f:
                 return json.load(f)
-        except:
-            pass
+        except json.JSONDecodeError as e:
+            console.print(f"[warning]⚠ Config file is corrupted: {e}. Using defaults.[/warning]")
+        except Exception as e:
+            console.print(f"[warning]⚠ Could not load config: {e}. Using defaults.[/warning]")
     return {}
 
 
@@ -4454,6 +4456,1145 @@ def market(subcommand, args):
     else:
         console.print(f"[red]Unknown market command: {subcommand}[/red]")
         console.print("Try: list, install")
+
+
+# ==================== V2.2.0 NEW FEATURES ====================
+
+@main.command()
+@click.argument("description", nargs=-1, required=True)
+@click.option("--content", is_flag=True, help="Search file contents (slower)")
+def find(description, content):
+    """
+    Semantic file search using natural language.
+    
+    Examples:
+        djinn find "python script about sorting"
+        djinn find "config files" --content
+    """
+    from djinn.core.search import SmartFileSearch
+    
+    query = " ".join(description)
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    console.print(f"\n[prompt]🔍 Searching for:[/prompt] {query}")
+    console.print("[muted]" + "=" * 50 + "  [/muted]")
+    
+    searcher = SmartFileSearch(engine)
+    
+    with spinner.status("Searching..."):
+        results = searcher.find(query, search_content=content)
+    
+    if results:
+        console.print(f"\n[success]Found {len(results)} matches:[/success]\n")
+        for i, result in enumerate(results[:20], 1):
+            relevance_icon = "⭐" if result.get("relevance", 1.0) > 1.5 else "📄"
+            console.print(f"  {relevance_icon} [highlight]{result['path']}[/highlight]")
+            size_kb = result.get('size', 0) / 1024
+            console.print(f"     [muted]({size_kb:.1f} KB)[/muted]")
+        
+        if len(results) > 20:
+            console.print(f"\n[muted]... and {len(results) - 20} more[/muted]")
+    else:
+        console.print("[muted]No matches found.[/muted]")
+
+
+@main.command(name="wtf")
+def wtf_command():
+    """
+    Explain the last error (Context-Aware Help).
+    
+    Alias: djinn ???
+    
+    Example:
+        $ some-failing-command
+        $ djinn wtf
+    """
+    from djinn.core.intelligence import ContextAwareHelper
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    helper = ContextAwareHelper(engine)
+    
+    console.print("\n[prompt]🤔 Analyzing last error...[/prompt")
+    console.print("[muted]" + "=" * 50 + "[/muted]")
+    
+    with spinner.status("Thinking..."):
+        explanation = helper.explain_last_error()
+    
+    console.print(f"\n{explanation}\n")
+
+
+@main.command()
+def chat():
+    """
+    Interactive codebase-aware chat.
+    
+    Chat about files in your current directory.
+    The AI knows about all code files and can answer questions.
+    
+    Commands during chat:
+        /show <file>  - Show file contents
+        /files        - List indexed files
+        /exit         - Exit chat
+    """
+    from djinn.core.codebase_chat import CodebaseChat
+    from rich.prompt import Prompt
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    console.print("\n[highlight]📁 Codebase Chat[/highlight]")
+    console.print("[muted]Indexing files in current directory...[/muted]\n")
+    
+    chat_bot = CodebaseChat(engine)
+    
+    with spinner.status("Indexing..."):
+        num_files = chat_bot.start()
+    
+    console.print(f"[success]✓ Indexed {num_files} files[/success]")
+    console.print("[muted]Ask questions about your code! Type '/exit' to quit.\n[/muted]")
+    
+    while True:
+        try:
+            question = Prompt.ask("[prompt]💬[/prompt]")
+            
+            if not question.strip():
+                continue
+            
+            if question.lower() in ["/exit", "/quit", "/q"]:
+                console.print("[muted]Goodbye![/muted]")
+                break
+            
+            if question.lower() == "/files":
+                file_list = chat_bot.context.get_file_list()
+                console.print(f"\n{file_list}\n")
+                continue
+            
+            if question.lower().startswith("/show "):
+                file_path = question[6:].strip()
+                content = chat_bot.show_file(file_path)
+                from rich.syntax import Syntax
+                try:
+                    syntax = Syntax(content[:1000], "python", theme="monokai")
+                    console.print(syntax)
+                except:
+                    console.print(content[:1000])
+                continue
+            
+            with spinner.status("Thinking..."):
+                answer = chat_bot.ask(question)
+            
+            console.print(f"\n[success]{answer}[/success]\n")
+        
+        except KeyboardInterrupt:
+            console.print("\n[muted]Goodbye![/muted]")
+            break
+
+
+@main.command(name="commit")
+def git_commit_wizard():
+    """
+    Generate conventional commit message from staged changes.
+    
+    Example:
+        $ git add .
+        $ djinn commit
+    """
+    from djinn.core.ai_features import GitCommitWizard
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    wizard = GitCommitWizard(engine)
+    
+    console.print("\n[prompt]📝 Generating commit message...[/prompt]")
+    console.print("[muted]" + "=" * 50 + "[/muted]")
+    
+    with spinner.status("Analyzing staged changes..."):
+        message = wizard.generate_commit_message()
+    
+    console.print(f"\n[success]Suggested commit message:[/success]\n")
+    console.print(f"[highlight]{message}[/highlight]\n")
+    
+    if Confirm.ask("Use this message?", default=True):
+        import subprocess
+        result = subprocess.run(["git", "commit", "-m", message], capture_output=True, text=True)
+        if result.returncode == 0:
+            console.print("[success]✓ Committed![/success]")
+        else:
+            console.print(f"[error]{result.stderr}[/error]")
+    else:
+        console.print("[muted]Cancelled.[/muted]")
+
+
+@main.command(name="review")
+@click.option("--base", default="main", help="Base branch to compare against")
+def pr_review(base):
+    """
+    Generate Pull Request review.
+    
+    Compares current branch against base branch (default: main).
+    
+    Example:
+        $ djinn review
+        $ djinn review --base develop
+    """
+    from djinn.core.ai_features import PRReviewer
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    reviewer = PRReviewer(engine)
+    
+    console.print(f"\n[prompt]📋 Reviewing PR against '{base}'...[/prompt]")
+    console.print("[muted]" + "=" * 50 + "[/muted]")
+    
+    with spinner.status("Analyzing changes..."):
+        review = reviewer.review_pr(base)
+    
+    console.print(f"\n{review}\n")
+
+
+@main.command(name="regex")
+@click.argument("pattern", nargs=-1, required=True)
+def explain_regex(pattern):
+    """
+    Explain a regular expression pattern.
+    
+    Example:
+        djinn regex "^[a-z0-9]+@[a-z]+\\.[a-z]{2,3}$"
+    """
+    from djinn.core.ai_features import RegexExplainer
+    
+    regex_str = " ".join(pattern)
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    explainer = RegexExplainer(engine)
+    
+    console.print(f"\n[prompt]🔤 Pattern:[/prompt] {regex_str}")
+    console.print("[muted]" + "=" * 50 + "[/muted]")
+    
+    with spinner.status("Analyzing pattern..."):
+        explanation = explainer.explain(regex_str)
+    
+    console.print(f"\n{explanation}\n")
+
+
+@main.command(name="sql")
+@click.argument("description", nargs=-1, required=True)
+@click.option("--schema", help="Database schema hint")
+@click.option("--explain", is_flag=True, help="Explain the generated query")
+def sql_generator(description, schema, explain):
+    """
+    Generate SQL query from natural language.
+    
+    Examples:
+        djinn sql "get all users who registered last week"
+        djinn sql "count orders by status" --schema "orders(id, status, created_at)"
+    """
+    from djinn.core.ai_features import SQLGenerator
+    
+    query_description = " ".join(description)
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    generator = SQLGenerator(engine)
+    
+    console.print(f"\n[prompt]💾 Request:[/prompt] {query_description}")
+    console.print("[muted]" + "=" * 50 + "[/muted]")
+    
+    with spinner.status("Generating SQL..."):
+        query = generator.generate(query_description, schema)
+    
+    console.print(f"\n[success]Generated Query:[/success]\n")
+    from rich.syntax import Syntax
+    syntax = Syntax(query, "sql", theme="monokai")
+    console.print(syntax)
+    
+    if explain:
+        console.print("\n[prompt]Explanation:[/prompt]")
+        with spinner.status("Explaining..."):
+            explanation = generator.explain_query(query)
+        console.print(f"\n{explanation}")
+    
+    console.print()
+    
+    try:
+        pyperclip.copy(query)
+        spinner.print_copied()
+    except:
+        pass
+
+
+@main.command(name="switch")
+@click.argument("backend", type=click.Choice(["ollama", "lmstudio", "openai"]), required=False)
+@click.option("--model", help="Model name to use")
+@click.option("--list", "list_backends", is_flag=True, help="List available backends")
+def switch_model(backend, model, list_backends):
+    """
+    Switch LLM backend/model on the fly.
+    
+    Examples:
+        djinn switch --list
+        djinn switch ollama --model llama3
+        djinn switch openai --model gpt-4
+    """
+    from djinn.core.ai_features import ModelSwitcher
+    
+    switcher = ModelSwitcher()
+    
+    if list_backends:
+        console.print("\n[highlight]Available Backends[/highlight]\n")
+        backends = switcher.list_available_backends()
+        
+        for name, available in backends.items():
+            status = "[success]✓ Available[/success]" if available else "[muted]✗ Not running[/muted]"
+            console.print(f"  {name:12} {status}")
+        console.print()
+        return
+    
+    if not backend:
+        # Show current config
+        config = load_config()
+        console.print(f"\n[highlight]Current Backend:[/highlight] {config.get('backend', 'none')}")
+        console.print(f"[highlight]Current Model:[/highlight] {config.get('model', 'none')}\n")
+        return
+    
+    # Switch backend
+    new_config = switcher.switch_backend(backend, model)
+    console.print(f"[success]✓ Switched to {backend}[/success]")
+    if model:
+        console.print(f"[success]✓ Model: {model}[/success]")
+
+
+# ==================== TUI COMMANDS ====================
+
+@main.command(name="dashboard")
+def launch_dashboard():
+    """Launch the DJINN TUI dashboard."""
+    from djinn.tui.interactive import run_dashboard
+    run_dashboard()
+
+
+@main.command(name="ps")
+def process_killer():
+    """Interactive process killer (vim keys)."""
+    from djinn.tui.interactive import run_process_killer
+    run_process_killer()
+
+
+@main.command(name="tree")
+def file_tree():
+    """File tree navigator."""
+    from djinn.tui.interactive import run_file_navigator
+    run_file_navigator()
+
+
+@main.command(name="json")
+@click.argument("file_path")
+def json_explorer(file_path):
+    """Explore JSON files interactively."""
+    from djinn.tui.interactive import run_json_explorer
+    import json
+    
+    with open(file_path) as f:
+        data = json.load(f)
+    
+    run_json_explorer(data)
+
+
+@main.command(name="logs")
+@click.argument("file_path")
+def log_watcher(file_path):
+    """Watch log files in real-time."""
+    from djinn.tui.interactive import run_log_watcher
+    run_log_watcher(file_path)
+
+
+# ==================== DEVOPS COMMANDS ====================
+
+@main.command(name="spell")
+@click.argument("action", type=click.Choice(["save", "cast", "list"]))
+@click.argument("name", required=False)
+@click.argument("commands", nargs=-1)
+def spell_manager(action, name, commands):
+    """Manage command spells (macros)."""
+    from djinn.core.devops_tools import SpellsManager
+    
+    mgr = SpellsManager()
+    
+    if action == "list":
+        spells = mgr.load_all()
+        if spells:
+            console.print("\n[highlight]✨ Saved Spells[/highlight]\n")
+            for spell_name, spell_data in spells.items():
+                console.print(f"[success]{spell_name}[/success]:")
+                for cmd in spell_data["commands"]:
+                    console.print(f"  • {cmd}")
+        else:
+            console.print("[muted]No spells saved.[/muted]")
+    
+    elif action == "save":
+        if not name:
+            console.print("[error]Usage: djinn spell save <name> <command1> <command2> ...[/error]")
+            return
+        
+        mgr.save_spell(name, list(commands))
+        console.print(f"[success]✨ Spell '{name}' saved![/success]")
+    
+    elif action == "cast":
+        if not name:
+            console.print("[error]Usage: djinn spell cast <name>[/error]")
+            return
+        
+        commands = mgr.cast_spell(name)
+        if commands:
+            console.print(f"\n[prompt]🪄 Casting spell '{name}'...[/prompt]\n")
+            for cmd in commands:
+                console.print(f"[command]> {cmd}[/command]")
+                subprocess.run(cmd, shell=True)
+        else:
+            console.print(f"[error]Spell '{name}' not found[/error]")
+
+
+@main.command(name="cron")
+@click.argument("description", nargs=-1, required=True)
+def cron_wizard(description):
+    """Generate crontab from natural language."""
+    from djinn.core.devops_tools import CronWizard
+    
+    desc = " ".join(description)
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    wizard = CronWizard(engine)
+    
+    console.print(f"\n[prompt]📅 Description:[/prompt] {desc}")
+    
+    with spinner.status("Generating cron..."):
+        cron_expr = wizard.generate_cron(desc)
+    
+    console.print(f"\n[success]Cron expression:[/success] {cron_expr}")
+    console.print(f"\n[muted]Add to crontab with: crontab -e[/muted]\n")
+
+
+@main.command(name="compose")
+@click.argument("description", nargs=-1, required=True)
+@click.option("--run", is_flag=True, help="Start services after generating")
+def docker_compose_generator(description, run):
+    """Generate docker-compose.yml from description."""
+    from djinn.core.devops_tools import DockerComposer
+    
+    desc = " ".join(description)
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    composer = DockerComposer(engine)
+    
+    console.print(f"\n[prompt]🐳 Services:[/prompt] {desc}")
+    
+    with spinner.status("Generating docker-compose.yml..."):
+        compose = composer.generate_compose(desc)
+    
+    console.print("\n[success]Generated docker-compose.yml:[/success]\n")
+    from rich.syntax import Syntax
+    syntax = Syntax(compose, "yaml", theme="monokai")
+    console.print(syntax)
+    
+    if Confirm.ask("\nSave to docker-compose.yml?", default=True):
+        with open("docker-compose.yml", 'w') as f:
+            f.write(compose)
+        console.print("[success]✓ Saved![/success]")
+        
+        if run:
+            console.print("[prompt]Starting services...[/prompt]")
+            subprocess.run(["docker-compose", "up", "-d"])
+
+
+@main.command(name="killport")
+@click.argument("port", type=int)
+def kill_port(port):
+    """Kill process on a specific port."""
+    from djinn.core.devops_tools import PortKiller
+    
+    console.print(f"\n[prompt]🔪 Killing process on port {port}...[/prompt]")
+    
+    if PortKiller.kill_port(port):
+        console.print(f"[success]✓ Port {port} is now free[/success]")
+    else:
+        console.print(f"[muted]No process found on port {port}[/muted]")
+
+
+@main.command(name="ssl")
+@click.argument("domain")
+def check_ssl_cert(domain):
+    """Check SSL certificate expiry."""
+    from djinn.core.devops_tools import SSLChecker
+    
+    console.print(f"\n[prompt]🔒 Checking SSL for {domain}...[/prompt]\n")
+    
+    result = SSLChecker.check_ssl(domain)
+    
+    if "error" in result:
+        console.print(f"[error]{result['error']}[/error]")
+    else:
+        console.print(f"[highlight]Domain:[/highlight] {result['domain']}")
+        console.print(f"[highlight]Expires:[/highlight] {result['expiry']}")
+        
+        days = result['days_left']
+        if days > 30:
+            color = "success"
+        elif days > 7:
+            color = "warning"
+        else:
+            color = "error"
+        
+        console.print(f"[{color}]Days Left:[/{color}] {days}")
+
+
+@main.command(name="speedtest")
+def network_speed_test():
+    """Run network speed test."""
+    from djinn.core.devops_tools import NetworkTools
+    
+    console.print("\n[prompt]🚀 Running speed test...[/prompt]")
+    console.print("[muted]This may take a moment...[/muted]\n")
+    
+    result = NetworkTools.speed_test()
+    
+    if "error" in result:
+        console.print(f"[error]{result['error']}[/error]")
+    else:
+        console.print(f"[success]⬇ Download:[/success] {result['download_mbps']} Mbps")
+        console.print(f"[success]⬆ Upload:[/success] {result['upload_mbps']} Mbps")
+        console.print(f"[success]📡 Ping:[/success] {result['ping_ms']} ms")
+
+
+@main.command(name="ip")
+def get_public_ip():
+    """Show public IP and geolocation."""
+    from djinn.core.devops_tools import NetworkTools
+    
+    console.print("\n[prompt]🌍 Fetching IP info...[/prompt]\n")
+    
+    info = NetworkTools.get_public_ip()
+    
+    if "error" in info:
+        console.print(f"[error]{info['error']}[/error]")
+    else:
+        console.print(f"[highlight]IP:[/highlight] {info.get('ip')}")
+        console.print(f"[highlight]City:[/highlight] {info.get('city')}, {info.get('country_name')}")
+        console.print(f"[highlight]ISP:[/highlight] {info.get('org')}")
+
+
+@main.command(name="serve")
+@click.option("--port", default=8000, help="Port number")
+@click.argument("directory", default=".")
+def http_server(port, directory):
+    """Start HTTP server for current directory."""
+    from djinn.core.devops_tools import HTTPServer
+    
+    console.print(f"\n[success]🌐 Starting server at http://localhost:{port}[/success]")
+    console.print(f"[muted]Serving: {Path(directory).resolve()}[/muted]\n")
+    console.print("[muted]Press Ctrl+C to stop[/muted]\n")
+    
+    HTTPServer.serve(directory, port)
+
+
+@main.command(name="tunnel")
+@click.argument("port", type=int)
+@click.option("--service", type=click.Choice(["ngrok", "localtunnel"]), default="ngrok")
+def create_tunnel(port, service):
+    """Create public tunnel to local port."""
+    from djinn.core.devops_tools import TunnelManager
+    
+    console.print(f"\n[prompt]🌐 Creating tunnel for port {port}...[/prompt]\n")
+    
+    url = TunnelManager.create_tunnel(port, service)
+    console.print(f"[success]✓ Tunnel created![/success]")
+    console.print(f"[highlight]Public URL:[/highlight] {url}\n")
+
+
+# ==================== FILE MANAGEMENT ====================
+
+@main.command(name="teleport")
+def save_location():
+    """Save current directory for later return."""
+    from djinn.core.file_tools import TeleportManager
+    
+    mgr = TeleportManager()
+    mgr.save_location()
+    
+    console.print(f"[success]📍 Location saved: {Path.cwd()}[/success]")
+
+
+@main.command(name="return")
+def teleport_back():
+    """Return to saved directory."""
+    from djinn.core.file_tools import TeleportManager
+    
+    mgr = TeleportManager()
+    location = mgr.get_location()
+    
+    if location:
+        console.print(f"[success]🚀 Returning to: {location}[/success]")
+        console.print(f"\n[muted]Run: cd {location}[/muted]")
+    else:
+        console.print("[error]No saved location. Use 'djinn teleport' first[/error]")
+
+
+@main.command(name="duplicates")
+@click.argument("directory", default=".")
+def find_duplicates(directory):
+    """Find duplicate files."""
+    from djinn.core.file_tools import DuplicateFinder
+    
+    console.print(f"\n[prompt]🔍 Scanning for duplicates in {directory}...[/prompt]\n")
+    
+    with spinner.status("Hashing files..."):
+        dups = DuplicateFinder.find_duplicates(directory)
+    
+    if dups:
+        console.print(f"[warning]Found {len(dups)} sets of duplicates:[/warning]\n")
+        for hash_val, files in list(dups.items())[:10]:
+            console.print(f"[highlight]Duplicate set ({len(files)} files):[/highlight]")
+            for f in files:
+                console.print(f"  • {f}")
+            console.print()
+    else:
+        console.print("[success]No duplicates found![/success]")
+
+
+@main.command(name=" qr")
+@click.argument("data")
+@click.option("--output", help="Output file (optional)")
+def generate_qr(data, output):
+    """Generate QR code."""
+    from djinn.core.file_tools import QRCodeGenerator
+    
+    console.print(f"\n[prompt]📱 Generating QR code...[/prompt]\n")
+    
+    result = QRCodeGenerator.generate_qr(data, output)
+    console.print(f"[success]{result}[/success]")
+
+
+@main.command(name="encrypt")
+@click.argument("file_path")
+@click.option("--password", prompt=True, hide_input=True)
+def encrypt_file(file_path, password):
+    """Encrypt a file with AES."""
+    from djinn.core.file_tools import FileEncryptor
+    
+    console.print(f"\n[prompt]🔐 Encrypting {file_path}...[/prompt]\n")
+    
+    FileEncryptor.encrypt_file(file_path, password)
+    console.print(f"[success]✓ Encrypted! Saved as {file_path}.encrypted[/success]")
+
+
+@main.command(name="decrypt")
+@click.argument("file_path")
+@click.argument("output_path")
+@click.option("--password", prompt=True, hide_input=True)
+def decrypt_file(file_path, output_path, password):
+    """Decrypt an encrypted file."""
+    from djinn.core.file_tools import FileEncryptor
+    
+    console.print(f"\n[prompt]🔓 Decrypting {file_path}...[/prompt]\n")
+    
+    try:
+        FileEncryptor.decrypt_file(file_path, password, output_path)
+        console.print(f"[success]✓ Decrypted! Saved as {output_path}[/success]")
+    except:
+        console.print("[error]Decryption failed. Wrong password?[/error]")
+
+
+# ==================== FUN & PRODUCTIVITY ====================
+
+@main.command(name="fortune")
+def dev_fortune():
+    """Get an AI-generated developer fortune."""
+    from djinn.core.fun_features import FortuneCookie
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    fortune = FortuneCookie(engine)
+    
+    with spinner.status("Consulting the oracle..."):
+        message = fortune.generate_fortune()
+    
+    console.print(f"\n[highlight]🥠 Fortune Cookie Says:[/highlight]\n")
+    console.print(f"[success]{message}[/success]\n")
+
+
+@main.command(name="pomodoro")
+@click.option("--work", default=25, help="Work minutes")
+@click.option("--break", "break_time", default=5, help="Break minutes")
+@click.option("--sessions", default=4, help="Number of sessions")
+def pomodoro_timer(work, break_time, sessions):
+    """Start Pomodoro timer."""
+    from djinn.core.fun_features import PomodoroTimer
+    
+    timer = PomodoroTimer(work, break_time)
+    timer.start(sessions)
+
+
+@main.command(name="weather")
+@click.argument("city", required=False)
+def get_weather(city):
+    """Get ASCII weather report."""
+    from djinn.core.fun_features import WeatherFetcher
+    
+    console.print(f"\n[prompt]🌤 Weather Report[/prompt]\n")
+    
+    weather = WeatherFetcher.get_weather(city)
+    console.print(weather)
+    console.print()
+
+
+@main.command(name="news")
+@click.option("--limit", default=10, help="Number of stories")
+def hacker_news(limit):
+    """Get top HackerNews stories."""
+    from djinn.core.fun_features import NewsReader
+    
+    console.print(f"\n[prompt]📰 Top HackerNews Stories[/prompt]\n")
+    
+    with spinner.status("Fetching stories..."):
+        stories = NewsReader.get_top_stories(limit)
+    
+    for i, story in enumerate(stories, 1):
+        console.print(f"{i}. [highlight]{story['title']}[/highlight]")
+        console.print(f"   [muted]{story['url']}[/muted]")
+        console.print(f"   [success]⬆ {story['score']}[/success] by {story['by']}\n")
+
+
+@main.command(name="passgen")
+@click.option("--length", default=16, help="Password length")
+@click.option("--no-symbols", is_flag=True, help="Exclude symbols")
+def generate_password(length, no_symbols):
+    """Generate secure password."""
+    from djinn.core.fun_features import PasswordGenerator
+    
+    password = PasswordGenerator.generate(length, not no_symbols)
+    
+    console.print(f"\n[success]🔑 Generated Password:[/success]\n")
+    console.print(f"[highlight]{password}[/highlight]\n")
+    
+    try:
+        pyperclip.copy(password)
+        spinner.print_copied()
+    except:
+        pass
+
+
+@main.command(name="stats")
+def productivity_stats():
+    """Show productivity statistics."""
+    from djinn.core.fun_features import ProductivityScore, TimeTracker
+    
+    score_calc = ProductivityScore()
+    tracker = TimeTracker()
+    
+    score_data = score_calc.calculate_score()
+    time_data = tracker.get_stats()
+    
+    console.print(f"\n[highlight]📊 Your Productivity Stats[/highlight]\n")
+    console.print(f"[success]Score:[/success] {score_data['score']}")
+    console.print(f"[success]Rank:[/success] {score_data['rank']}")
+    console.print(f"[success]Progress to {score_data['next_rank']}:[/success] {score_data['progress_to_next']}%")
+    console.print(f"\n[success]Total Terminal Time:[/success] {time_data['total_hours']}h")
+    console.print(f"[success]Today:[/success] {time_data['today_hours']}h\n")
+
+
+# ==================== SECURITY ====================
+
+@main.command(name="audit")
+@click.argument("target", type=click.Choice(["python", "node"]))
+def audit_dependencies(target):
+    """Audit dependencies for vulnerabilities."""
+    from djinn.core.security_tools import DependencyAuditor
+    
+    console.print(f"\n[prompt]🔍 Auditing {target} dependencies...[/prompt]\n")
+    
+    if target == "python":
+        result = DependencyAuditor.audit_python()
+    else:
+        result = DependencyAuditor.audit_node()
+    
+    if "error" in result:
+        console.print(f"[error]{result['error']}[/error]")
+    else:
+        console.print(result['output'])
+
+
+@main.command(name="secrets")
+@click.option("--staged", is_flag=True, help="Check only staged files")
+def scan_secrets(staged):
+    """Scan for secrets in code."""
+    from djinn.core.security_tools import SecretScanner
+    
+    console.print("\n[prompt]🔐 Scanning for secrets...[/prompt]\n")
+    
+    with spinner.status("Scanning..."):
+        if staged:
+            findings = SecretScanner.check_staged_files()
+        else:
+            findings = SecretScanner.scan_directory()
+    
+    if findings:
+        console.print(f"[warning]⚠ Found {len(findings)} potential secrets:[/warning]\n")
+        for finding in findings[:20]:
+            console.print(f"[error]{finding['type']}[/error] in {finding['file']}:{finding['line']}")
+            console.print(f"  {finding['match']}\n")
+    else:
+        console.print("[success]✓ No secrets detected![/success]")
+
+
+@main.command(name="fixperms")
+@click.argument("target", type=click.Choice(["ssh", "scripts"]))
+def fix_permissions(target):
+    """Fix file permissions."""
+    from djinn.core.security_tools import PermissionFixer
+    
+    console.print(f"\n[prompt]🔧 Fixing {target} permissions...[/prompt]\n")
+    
+    if target == "ssh":
+        result = PermissionFixer.fix_ssh_keys()
+        console.print(f"[success]Fixed:[/success]\n{result}")
+    else:
+        files = PermissionFixer.fix_script_permissions()
+        console.print(f"[success]Made {len(files)} scripts executable[/success]")
+
+
+@main.command(name="tempmail")
+@click.option("--check", help="Check inbox for email address")
+def temp_email(check):
+    """Get temporary email address."""
+    from djinn.core.security_tools import DisposableEmail
+    
+    if check:
+        console.print(f"\n[prompt]📧 Checking inbox for {check}...[/prompt]\n")
+        messages = DisposableEmail.check_inbox(check)
+        
+        if messages:
+            for msg in messages:
+                console.print(f"[highlight]From:[/highlight] {msg.get('from')}")
+                console.print(f"[highlight]Subject:[/highlight] {msg.get('subject')}\n")
+        else:
+            console.print("[muted]No messages[/muted]")
+    else:
+        result = DisposableEmail.get_temp_email()
+        
+        if "error" in result:
+            console.print(f"[error]{result['error']}[/error]")
+        else:
+            console.print(f"\n[success]📧 Temporary Email:[/success]\n")
+            console.print(f"[highlight]{result['email']}[/highlight]\n")
+            console.print(f"[muted]{result['note']}[/muted]\n")
+
+
+# ==================== REMAINING AI FEATURES ====================
+
+@main.command(name="persona")
+@click.argument("action", type=click.Choice(["set", "list", "current"]))
+@click.argument("name", required=False)
+def persona_manager(action, name):
+    """Change AI persona/tone."""
+    from djinn.core.advanced_ai import PersonaMorphing
+    
+    pm = PersonaMorphing()
+    
+    if action == "list":
+        console.print("\n[highlight]🎭 Available Personas[/highlight]\n")
+        for persona_name, data in pm.list_personas().items():
+            current = " [success]← Current[/success]" if persona_name == pm.current_persona else ""
+            console.print(f"[bold]{persona_name}[/bold]{current}")
+            console.print(f"  {data['style']}\n")
+    
+    elif action == "current":
+        console.print(f"\n[success]Current Persona:[/success] {pm.current_persona}")
+        console.print(f"{pm.PERSONAS[pm.current_persona]['style']}\n")
+    
+    elif action == "set":
+        if not name:
+            console.print("[error]Usage: djinn persona set <name>[/error]")
+            return
+        
+        try:
+            pm.set_persona(name)
+            console.print(f"[success]✓ Persona set to: {name}[/success]")
+        except ValueError as e:
+            console.print(f"[error]{e}[/error]")
+
+
+@main.command(name="predict")
+def predict_next_command():
+    """Predict next likely command based on history."""
+    from djinn.core.advanced_ai import PredictiveNextStep
+    
+    predictor = PredictiveNextStep()
+    predictions = predictor.predict_next()
+    
+    if predictions:
+        console.print("\n[highlight]🔮 Predicted Next Commands[/highlight]\n")
+        for i, cmd in enumerate(predictions, 1):
+            console.print(f"{i}. [success]{cmd}[/success]")
+        console.print()
+    else:
+        console.print("[muted]Not enough history to make predictions[/muted]")
+
+
+@main.command(name="voice")
+def voice_mode_interactive():
+    """Start voice interaction mode."""
+    from djinn.core.advanced_ai import VoiceMode
+    
+    config = load_config()
+    engine = DjinnEngine(backend=config.get("backend", "ollama"), model=config.get("model"), api_key=config.get("api_key"))
+    
+    voice = VoiceMode(engine)
+    voice.interactive_session()
+
+
+# ==================== ADDITIONAL TUI FEATURES ====================
+
+@main.command(name="mdview")
+@click.argument("file_path")
+def markdown_preview(file_path):
+    """Preview markdown files."""
+    from djinn.tui.additional_features import run_markdown_preview
+    run_markdown_preview(file_path)
+
+
+@main.command(name="hex")
+@click.argument("file_path")
+def hex_viewer(file_path):
+    """View file in hex editor."""
+    from djinn.tui.additional_features import run_hex_editor
+    run_hex_editor(file_path)
+
+
+@main.command(name="gitgraph")
+def git_graph():
+    """Visual git commit graph."""
+    from djinn.tui.additional_features import run_git_graph
+    run_git_graph()
+
+
+@main.command(name="ascii")
+@click.argument("input_text", nargs=-1)
+@click.option("--image", help="Convert image to ASCII")
+@click.option("--font", default="standard", help="ASCII art font")
+def ascii_art(input_text, image, font):
+    """Generate ASCII art."""
+    from djinn.tui.additional_features import ASCIIArtGenerator
+    
+    if image:
+        result = ASCIIArtGenerator.image_to_ascii(image)
+    else:
+        text = " ".join(input_text)
+        result = ASCIIArtGenerator.text_to_ascii_art(text, font)
+    
+    console.print(result)
+
+
+@main.command(name="matrix")
+@click.option("--duration", default=60, help="Duration in seconds")
+def matrix_screensaver(duration):
+    """Matrix-style screensaver."""
+    from djinn.tui.additional_features import run_screensaver
+    run_screensaver(duration)
+
+
+# ==================== FILE TOOLS ====================
+
+@main.command(name="pdfmerge")
+@click.argument("output")
+@click.argument("inputs", nargs=-1, required=True)
+def pdf_merge(output, inputs):
+    """Merge PDF files."""
+    from djinn.core.remaining_tools import PDFMerger
+    
+    console.print(f"\n[prompt]📄 Merging {len(inputs)} PDF files...[/prompt]\n")
+    
+    result = PDFMerger.merge_pdfs(list(inputs), output)
+    console.print(f"[success]{result}[/success]")
+
+
+@main.command(name="clip")
+@click.argument("action", type=click.Choice(["save", "history", "get", "clear"]))
+@click.argument("args", nargs=-1)
+def clipboard_manager(action, args):
+    """Manage clipboard history."""
+    from djinn.core.remaining_tools import ClipboardManager
+    
+    mgr = ClipboardManager()
+    
+    if action == "save":
+        text = " ".join(args)
+        mgr.save_to_clipboard(text)
+        console.print("[success]✓ Saved to clipboard[/success]")
+    
+    elif action == "history":
+        history = mgr.load_history()
+        if history:
+            console.print("\n[highlight]📋 Clipboard History[/highlight]\n")
+            for i, item in enumerate(history[:10], 1):
+                preview = item["text"][:50] + "..." if len(item["text"]) > 50 else item["text"]
+                console.print(f"{i}. {preview}")
+        else:
+            console.print("[muted]No clipboard history[/muted]")
+    
+    elif action == "get":
+        if args:
+            index = int(args[0]) - 1
+            text = mgr.get_from_history(index)
+            if text:
+                import pyperclip
+                pyperclip.copy(text)
+                console.print(f"[success]✓ Copied item {index + 1} to clipboard[/success]")
+            else:
+                console.print("[error]Invalid index[/error]")
+    
+    elif action == "clear":
+        mgr.clear_history()
+        console.print("[success]✓ Clipboard history cleared[/success]")
+
+
+@main.command(name="tmp")
+@click.option("--edit", is_flag=True, help="Create and edit in default editor")
+@click. option("--suffix", default=".txt", help="File suffix")
+def temp_file(edit, suffix):
+    """Create temporary file."""
+    from djinn.core.remaining_tools import TempFileManager
+    
+    if edit:
+        path = TempFileManager.create_and_edit(suffix=suffix)
+    else:
+        path = TempFileManager.create_temp_file(suffix=suffix)
+    
+    console.print(f"[success]✓ Created:[/success] {path}")
+
+
+# ==================== DEVOPS - KUBERNETES ====================
+
+@main.command(name="k8s")
+@click.argument("action", type=click.Choice(["pods", "logs", "describe"]))
+@click.option("--namespace", "-n", default="default", help="Namespace")
+@click.option("--pod", help="Pod name (for logs/describe)")
+def kubernetes_manager(action, namespace, pod):
+    """Kubernetes pod management."""
+    from djinn.core.remaining_tools import KubernetesLens
+    
+    if action == "pods":
+        console.print(f"\n[highlight]☸️  Pods in {namespace}[/highlight]\n")
+        pods = KubernetesLens.list_pods(namespace)
+        
+        from rich.table import Table
+        table = Table()
+        table.add_column("Name")
+        table.add_column("Status")
+        table.add_column("Restarts")
+        
+        for p in pods:
+            if "error" not in p:
+                status_color = "success" if p["status"] == "Running" else "error"
+                table.add_row(p["name"], f"[{status_color}]{p['status']}[/{status_color}]", str(p["restarts"]))
+        
+        console.print(table)
+    
+    elif action == "logs":
+        if not pod:
+            console.print("[error]--pod required for logs[/error]")
+            return
+        
+        console.print(f"\n[highlight]📋 Logs for {pod}[/highlight]\n")
+        logs = KubernetesLens.get_logs(pod, namespace)
+        console.print(logs)
+    
+    elif action == "describe":
+        if not pod:
+            console.print("[error]--pod required for describe[/error]")
+            return
+        
+        desc = KubernetesLens.describe_pod(pod, namespace)
+        console.print(desc)
+
+
+# ==================== FUN FEATURES ====================
+
+@main.command(name="pet")
+@click.argument("action", type=click.Choice(["status", "feed", "play", "create"]))
+@click.option("--type", "pet_type", default="cat", help="Pet type (cat, dog, bird, fish)")
+def terminal_pet(action, pet_type):
+    """Virtual terminal pet."""
+    from djinn.tui.additional_features import TerminalPet
+    
+    pet = TerminalPet(pet_type)
+    
+    if action == "status":
+        console.print(f"\n{pet.status()}\n")
+    
+    elif action == "feed":
+        pet.feed()
+        console.print(f"[success]Fed {pet.get_emoji()}![/success]")
+        console.print(pet.status())
+    
+    elif action == "play":
+        pet.play()
+        console.print(f"[success]Played with {pet.get_emoji()}![/success]")
+        console.print(pet.status())
+    
+    elif action == "create":
+        console.print(f"[success]Created new {pet_type} pet {pet.get_emoji()}![/success]")
+        console.print(pet.status())
+
+
+@main.command(name="type")
+def typing_game():
+    """Z-Type style typing game."""
+    from djinn.tui.additional_features import TypingGame
+    
+    game = TypingGame()
+    game.play()
+
+
+@main.command(name="music")
+@click.argument("action", type=click.Choice(["status", "play", "pause", "next", "prev"]))
+def music_control(action):
+    """Control Spotify playback."""
+    from djinn.core.remaining_tools import MusicPlayer
+    
+    if action == "status":
+        status = MusicPlayer.spotify_status()
+        
+        if "error" in status:
+            console.print(f"[error]{status['error']}[/error]")
+        elif status.get("playing"):
+            console.print(f"\n[highlight]🎵 Now Playing[/highlight]\n")
+            console.print(f"[success]{status['track']}[/success]")
+            console.print(f"by {status['artist']}")
+            console.print(f"on {status['album']}\n")
+        else:
+            console.print("[muted]Not playing[/muted]")
+    else:
+        result = MusicPlayer.spotify_control(action if action != "prev" else "previous")
+        console.print(f"[success]{result}[/success]")
+
+
+@main.command(name="stocks")
+@click.argument("symbol")
+def stock_ticker(symbol):
+    """Show crypto/stock price."""
+    from djinn.tui.additional_features import StockTicker
+    
+    console.print(f"\n[prompt]💰 Fetching price for {symbol.upper()}...[/prompt]\n")
+    
+    data = StockTicker.get_crypto_price(symbol.lower())
+    result = StockTicker.format_ticker(data)
+    
+    console.print(result)
+    console.print()
+
 
 if __name__ == "__main__":
     main()

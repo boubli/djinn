@@ -25,3 +25,7 @@ Thank you for your interest in contributing to DJINN! We welcome contributions f
 ## Reporting Issues
 
 Please use the issue templates provided to report bugs or request features. Include as much detail as possible.
+
+## Code of Conduct
+
+Please note that we have a [Code of Conduct](CODE_OF_CONDUCT.md). Please follow it in all your interactions with the project.

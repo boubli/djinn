@@ -38,3 +38,7 @@ ENV/
 .djinn/
 history.json
 aliases.json
+
+# Tests (local only)
+tests/
+.pytest_cache/

@@ -37,9 +37,11 @@ The marketplace is simply a JSON file hosted on GitHub. To publish your plugin:
         "my-plugin": {
             "description": "Does amazing things",
             "author": "Your Name",
-            "url": "https://raw.githubusercontent.com/you/repo/master/plugin.py",
-            "version": "1.0.0"
+            "url": "https://raw.githubusercontent.com/you/repo/main/plugin.py",
+            "version": "1.0.0" 
         }
+        ```
+        *(Note: `version` is the version of **your** plugin, independent of DJINN. You can start at `0.1.0` if you prefer.)*
         ```
     *   Submit a **Pull Request**.
 

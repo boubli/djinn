@@ -1,16 +1,358 @@
 {
-    "plugins": {
-        "hello-world": {
-            "description": "A simple example plugin that says hello.",
-            "author": "Djinn Team",
-            "url": "https://raw.githubusercontent.com/boubli/djinn/master/examples/plugins/hello_world.py",
-            "version": "1.0.0"
-        },
-        "system-monitor": {
-            "description": "Advanced system monitoring tool (CPU, RAM, Disk).",
-            "author": "Community",
-            "url": "https://raw.githubusercontent.com/boubli/djinn/master/examples/plugins/monitor.py",
-            "version": "0.5.0"
-        }
+  "version": "3.0",
+  "last_updated": "2026-01-14",
+  "total_plugins": 30,
+  "categories": {
+    "ai": {"name": "AI & ML", "icon": "🤖", "description": "AI and Machine Learning tools"},
+    "devops": {"name": "DevOps", "icon": "🛠️", "description": "Infrastructure & automation"},
+    "cloud": {"name": "Cloud", "icon": "☁️", "description": "Cloud platform integrations"},
+    "development": {"name": "Development", "icon": "💻", "description": "Developer tools & utilities"},
+    "database": {"name": "Database", "icon": "📊", "description": "Database management"},
+    "productivity": {"name": "Productivity", "icon": "⚡", "description": "Workflow automation"},
+    "security": {"name": "Security", "icon": "🔒", "description": "Security & privacy tools"},
+    "media": {"name": "Media", "icon": "🎬", "description": "Media & entertainment"}
+  },
+  "plugins": {
+    "database-cli": {
+      "name": "Database CLI",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Universal database client for PostgreSQL, MySQL, SQLite, MongoDB.",
+      "category": "database",
+      "path": "marketplace/database-cli/plugin.py",
+      "requires": ["psycopg2-binary", "mysql-connector-python", "pymongo"],
+      "verified": true,
+      "tags": ["database", "sql", "postgres", "mysql", "mongodb"]
+    },
+    "api-tester": {
+      "name": "API Tester",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Postman-like HTTP client for API testing.",
+      "category": "development",
+      "path": "marketplace/api-tester/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["api", "http", "rest", "postman", "testing"]
+    },
+    "vercel-deploy": {
+      "name": "Vercel Deploy",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Deploy to Vercel, manage projects and domains.",
+      "category": "cloud",
+      "path": "marketplace/vercel-deploy/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["vercel", "deploy", "hosting", "nextjs"]
+    },
+    "firebase": {
+      "name": "Firebase",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Firebase hosting, Firestore, and project management.",
+      "category": "cloud",
+      "path": "marketplace/firebase/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["firebase", "google", "hosting", "firestore"]
+    },
+    "notion-cli": {
+      "name": "Notion CLI",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Manage Notion workspaces, pages, databases from terminal.",
+      "category": "productivity",
+      "path": "marketplace/notion-cli/plugin.py",
+      "requires": ["notion-client"],
+      "verified": true,
+      "tags": ["notion", "notes", "productivity", "wiki"]
+    },
+    "slack-cli": {
+      "name": "Slack CLI",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Send messages, read channels, manage Slack from terminal.",
+      "category": "productivity",
+      "path": "marketplace/slack-cli/plugin.py",
+      "requires": ["slack_sdk"],
+      "verified": true,
+      "tags": ["slack", "messaging", "team", "communication"]
+    },
+    "todoist": {
+      "name": "Todoist",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Manage Todoist tasks from terminal.",
+      "category": "productivity",
+      "path": "marketplace/todoist/plugin.py",
+      "requires": ["todoist-api-python"],
+      "verified": true,
+      "tags": ["todoist", "tasks", "productivity", "todo"]
+    },
+    "redis-cli": {
+      "name": "Redis CLI",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Redis database client.",
+      "category": "database",
+      "path": "marketplace/redis-cli/plugin.py",
+      "requires": ["redis"],
+      "verified": true,
+      "tags": ["redis", "cache", "database", "nosql"]
+    },
+    "elasticsearch": {
+      "name": "Elasticsearch",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Elasticsearch cluster management and queries.",
+      "category": "database",
+      "path": "marketplace/elasticsearch/plugin.py",
+      "requires": ["elasticsearch"],
+      "verified": true,
+      "tags": ["elasticsearch", "search", "analytics"]
+    },
+    "ollama-manager": {
+      "name": "Ollama Manager",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Manage local Ollama LLM models.",
+      "category": "ai",
+      "path": "marketplace/ollama-manager/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["ollama", "llm", "ai", "local"]
+    },
+    "terraform": {
+      "name": "Terraform",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Terraform infrastructure as code management.",
+      "category": "devops",
+      "path": "marketplace/terraform/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["terraform", "iac", "infrastructure", "devops"]
+    },
+    "kubernetes": {
+      "name": "Kubernetes",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Enhanced Kubernetes management.",
+      "category": "devops",
+      "path": "marketplace/kubernetes/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["kubernetes", "k8s", "containers", "devops"]
+    },
+    "cloudflare": {
+      "name": "Cloudflare",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Cloudflare DNS, Workers, and Pages management.",
+      "category": "cloud",
+      "path": "marketplace/cloudflare/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["cloudflare", "dns", "cdn", "workers"]
+    },
+    "spotify": {
+      "name": "Spotify",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Control Spotify playback from terminal.",
+      "category": "media",
+      "path": "marketplace/spotify/plugin.py",
+      "requires": ["spotipy"],
+      "verified": true,
+      "tags": ["spotify", "music", "playback"]
+    },
+    "openai-chat": {
+      "name": "OpenAI Chat",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Direct GPT-4/ChatGPT access from terminal.",
+      "category": "ai",
+      "path": "marketplace/openai-chat/plugin.py",
+      "requires": ["openai"],
+      "verified": true,
+      "tags": ["openai", "gpt", "chatgpt", "ai"]
+    },
+    "supabase": {
+      "name": "Supabase",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Supabase database, auth, and storage.",
+      "category": "cloud",
+      "path": "marketplace/supabase/plugin.py",
+      "requires": ["supabase"],
+      "verified": true,
+      "tags": ["supabase", "postgres", "auth", "storage"]
+    },
+    "webhook-tester": {
+      "name": "Webhook Tester",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Test webhooks and capture HTTP requests.",
+      "category": "development",
+      "path": "marketplace/webhook-tester/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["webhook", "http", "testing", "mock"]
+    },
+    "data-converter": {
+      "name": "Data Converter",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Convert between JSON, YAML, TOML, CSV formats.",
+      "category": "development",
+      "path": "marketplace/data-converter/plugin.py",
+      "requires": ["pyyaml", "toml"],
+      "verified": true,
+      "tags": ["json", "yaml", "toml", "csv", "convert"]
+    },
+    "password-manager": {
+      "name": "Password Manager",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "1Password and Bitwarden CLI integration.",
+      "category": "security",
+      "path": "marketplace/password-manager/plugin.py",
+      "requires": ["pyperclip"],
+      "verified": true,
+      "tags": ["1password", "bitwarden", "passwords", "security"]
+    },
+    "data-faker": {
+      "name": "Data Faker",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Generate fake data for testing and development.",
+      "category": "development",
+      "path": "marketplace/data-faker/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["fake", "mock", "data", "testing"]
+    },
+    "stripe": {
+      "name": "Stripe",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Stripe payments and billing management.",
+      "category": "cloud",
+      "path": "marketplace/stripe/plugin.py",
+      "requires": ["stripe"],
+      "verified": true,
+      "tags": ["stripe", "payments", "billing", "subscriptions"]
+    },
+    "linear": {
+      "name": "Linear",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Linear issue tracking from terminal.",
+      "category": "productivity",
+      "path": "marketplace/linear/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["linear", "issues", "project-management"]
+    },
+    "screenshot": {
+      "name": "Screenshot",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Capture screenshots and screen recordings.",
+      "category": "productivity",
+      "path": "marketplace/screenshot/plugin.py",
+      "requires": ["pillow", "pyautogui"],
+      "verified": true,
+      "tags": ["screenshot", "screen", "recording", "capture"]
+    },
+    "jira": {
+      "name": "Jira",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Jira issue tracking from terminal.",
+      "category": "productivity",
+      "path": "marketplace/jira/plugin.py",
+      "requires": ["requests"],
+      "verified": true,
+      "tags": ["jira", "issues", "atlassian", "project-management"]
+    },
+    "huggingface": {
+      "name": "HuggingFace",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "HuggingFace Hub model management.",
+      "category": "ai",
+      "path": "marketplace/huggingface/plugin.py",
+      "requires": ["huggingface_hub"],
+      "verified": true,
+      "tags": ["huggingface", "models", "ai", "machine-learning"]
+    },
+    "netlify": {
+      "name": "Netlify",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Netlify deployment and site management.",
+      "category": "cloud",
+      "path": "marketplace/netlify/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["netlify", "deploy", "hosting", "jamstack"]
+    },
+    "youtube-dl": {
+      "name": "YouTube Downloader",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Download videos from YouTube and other sites.",
+      "category": "media",
+      "path": "marketplace/youtube-dl/plugin.py",
+      "requires": ["yt-dlp"],
+      "verified": true,
+      "tags": ["youtube", "video", "download", "media"]
+    },
+    "pomodoro": {
+      "name": "Pomodoro Timer",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Pomodoro timer for productivity.",
+      "category": "productivity",
+      "path": "marketplace/pomodoro/plugin.py",
+      "requires": [],
+      "verified": true,
+      "tags": ["pomodoro", "timer", "focus", "productivity"]
+    },
+    "system-monitor": {
+      "name": "System Monitor",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Advanced system monitoring (CPU, RAM, Disk, Network).",
+      "category": "devops",
+      "path": "marketplace/system-monitor/plugin.py",
+      "requires": ["psutil"],
+      "verified": true,
+      "tags": ["system", "monitoring", "cpu", "memory"]
+    },
+    "github-toolkit": {
+      "name": "GitHub Toolkit",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "Advanced GitHub operations: PRs, releases, actions.",
+      "category": "development",
+      "path": "marketplace/github-toolkit/plugin.py",
+      "requires": ["PyGithub"],
+      "verified": true,
+      "tags": ["github", "git", "pr", "releases", "actions"]
+    },
+    "aws-toolkit": {
+      "name": "AWS Toolkit",
+      "version": "1.0.0",
+      "author": "DJINN Team",
+      "description": "AWS shortcuts: S3, EC2, Lambda management.",
+      "category": "cloud",
+      "path": "marketplace/aws-toolkit/plugin.py",
+      "requires": ["boto3"],
+      "verified": true,
+      "tags": ["aws", "s3", "ec2", "lambda", "cloud"]
     }
+  }
 }

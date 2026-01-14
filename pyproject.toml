@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "djinn-cli"
-version = "2.1.1"
-description = "⚡ DJINN - AI-powered CLI that converts natural language to shell commands. 87 specialized commands for DevOps, Cloud, Databases, and more."
+version = "2.2.0"
+description = "AI-powered CLI that converts natural language into shell commands. Built-in tools for DevOps, Security, Development, and Productivity."
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -34,10 +34,40 @@ dependencies = [
     "openai>=1.0",
     "pyperclip>=1.8",
     "prompt-toolkit>=3.0",
+    "psutil>=5.9",  # Process management
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "black", "ruff"]
+full = [
+    # TUI Features
+    "textual>=0.40",
+    # Security & Encryption
+    "cryptography>=41.0",
+    "pip-audit>=2.6",
+    # File Tools
+    "qrcode>=7.4",
+    "pillow>=10.0",
+    "tqdm>=4.66",
+    "PyPDF2>=3.0",
+    "pyfiglet>=0.8",
+    # Network Tools
+    "dnspython>=2.4",
+    "speedtest-cli>=2.1",
+    "beautifulsoup4>=4.12",
+    # Fun Features
+    "schedule>=1.2",
+    "spotipy>=2.23",
+    # Voice Mode
+    "SpeechRecognition>=3.10",
+    "pyttsx3>=2.90",
+]
+tui = ["textual>=0.40", "pyfiglet>=0.8"]
+security = ["cryptography>=41.0", "pip-audit>=2.6"]
+network = ["dnspython>=2.4", "speedtest-cli>=2.1", "beautifulsoup4>=4.12"]
+files = ["qrcode>=7.4", "pillow>=10.0", "tqdm>=4.66", "PyPDF2>=3.0"]
+voice = ["SpeechRecognition>=3.10", "pyttsx3>=2.90"]
+music = ["spotipy>=2.23"]
 
 [project.scripts]
 djinn = "djinn.cli:main"
@@ -50,3 +80,9 @@ Issues = "https://github.com/boubli/djinn/issues"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["djinn*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

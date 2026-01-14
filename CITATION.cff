@@ -4,7 +4,7 @@ authors:
   - family-names: "Boubli"
     given-names: "Youssef"
 title: "DJINN: AI-Powered Terminal Assistant"
-version: 2.1.1
+version: 2.2.0
 date-released: 2026-01-13
 url: "https://github.com/boubli/djinn"
 keywords:
