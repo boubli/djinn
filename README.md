@@ -1,6 +1,8 @@
 # DJINN - Terminal Sorcery at Your Command 🧞‍♂️
 
-![DJINN Logo](assets/djinn_logo.png)
+<p align="center">
+  <img src="assets/djinn_logo.png" width="300" alt="DJINN Logo">
+</p>
 
 [![PyPI Version](https://img.shields.io/pypi/v/djinn-cli.svg?color=blue)](https://pypi.org/project/djinn-cli/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/djinn-cli.svg)](https://pypi.org/project/djinn-cli/)
