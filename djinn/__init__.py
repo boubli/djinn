@@ -6,5 +6,5 @@ Website:   https://boubli.tech
 GitHub:    https://github.com/boubli
 """
 
-__version__ = "2.1.1"
+__version__ = "2.3.0"
 __author__ = "Youssef Boubli"
