@@ -2,6 +2,8 @@
 Interactive Help Navigator using Prompt Toolkit.
 Allows users to explore commands by category with robust keyboard navigation.
 """
+import sys
+import os
 from prompt_toolkit import Application
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout.containers import HSplit, VSplit, Window, WindowAlign
@@ -99,6 +101,7 @@ class HelpNavigator:
         self.selected_category_idx = 0
         self.selected_command_idx = 0
         self.active_pane = "categories"  # 'categories' or 'commands'
+        self.selected_command_name = None
         
         self.kb = KeyBindings()
         self.setup_keybindings()
@@ -128,18 +131,31 @@ class HelpNavigator:
                 self.selected_command_idx = (self.selected_command_idx + 1) % len(cmds)
 
         @self.kb.add('right')
-        @self.kb.add('enter')
         @self.kb.add('tab')
         def _(event):
             if self.active_pane == "categories":
                 self.active_pane = "commands"
                 self.selected_command_idx = 0
 
+        @self.kb.add('enter')
+        def _(event):
+            if self.active_pane == "categories":
+                self.active_pane = "commands"
+                self.selected_command_idx = 0
+            else:
+                # Select the command and exit
+                cat_name = self.categories[self.selected_category_idx]
+                cmd_name = self.CATEGORIES[cat_name][self.selected_command_idx][0]
+                self.selected_command_name = cmd_name
+                event.app.exit()
+
         @self.kb.add('left')
         @self.kb.add('escape')
         def _(event):
             if self.active_pane == "commands":
                 self.active_pane = "categories"
+            else:
+                event.app.exit() # Escape in categories exits
 
     def get_categories_text(self):
         result = []
@@ -224,5 +240,12 @@ def launch_help():
     navigator = HelpNavigator()
     try:
         navigator.run()
+        if navigator.selected_command_name:
+            print(f"\n[DJINN] Selected: {navigator.selected_command_name}")
+            # Try to show help for the command
+            try:
+                os.system(f"djinn {navigator.selected_command_name} --help")
+            except:
+                pass
     except Exception as e:
         print(f"Error starting interactive help: {e}")
