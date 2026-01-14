@@ -138,6 +138,9 @@ class HelpNavigator:
                 self.selected_command_idx = 0
 
         @self.kb.add('enter')
+        @self.kb.add('c-m')
+        @self.kb.add('c-j')
+        @self.kb.add('space')
         def _(event):
             if self.active_pane == "categories":
                 self.active_pane = "commands"

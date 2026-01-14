@@ -228,10 +228,10 @@ def main(ctx, interactive, mini, version, help):
     if interactive or getattr(sys, 'frozen', False):
          run_interactive(backend, model, context=True, api_key=api_key)
     else:
-        # Default with no args: Launch Interactive Help / Dashboard
-        # This satisfies "stay in djinn" and "category" logic
-        from djinn.tui.help_navigator import launch_help
-        launch_help()
+        # Default behavior: Show standard help text
+        # User requested TUI only on --help
+        click.echo(ctx.get_help())
+        ctx.exit()
 
 
 @main.command(name="summon", hidden=True)

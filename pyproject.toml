@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "djinn-cli"
-version = "2.3.1"
+version = "2.3.2"
 description = "AI-powered CLI that converts natural language into shell commands. Built-in tools for DevOps, Security, Development, and Productivity."
 readme = "README.md"
 license = {text = "MIT"}
