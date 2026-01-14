@@ -202,77 +202,95 @@ class RichHelpNavigator(HelpNavigator):
                 elif key == 'down':
                     if self.active_pane == "categories":
                         self.selected_category_idx = (self.selected_category_idx + 1) % len(self.categories)
-                    else:
-                        cat_name = self.categories[self.selected_category_idx]
-                        cmds = self.CATEGORIES[cat_name]
-                        self.selected_command_idx = (self.selected_command_idx + 1) % len(cmds)
-                elif key in ('right', '\r', ' '):
-                    if self.active_pane == "categories":
-                        self.active_pane = "commands"
-                        self.selected_command_idx = 0
-                elif key in ('left', '\x1b'): # Esc or Left
-                    if self.active_pane == "commands":
-                        self.active_pane = "categories"
-    
-    def make_layout(self):
-        layout = Layout()
-        layout.split(
-            Layout(name="header", size=3),
-            Layout(name="body"),
-            Layout(name="footer", size=3)
-        )
-        
-        layout["body"].split_row(
-            Layout(name="categories", ratio=1),
-            Layout(name="commands", ratio=2)
-        )
-        
-        # Header
-        layout["header"].update(
-            Panel(Align.center("[bold magenta]🧞 DJINN Interactive Help[/bold magenta]"), style="magenta")
-        )
-        
-        # Categories List
-        cat_text = Text()
+
+        @self.kb.add('left')
+        @self.kb.add('escape')
+        def _(event):
+            if self.active_pane == "commands":
+                self.active_pane = "categories"
+
+    def get_categories_text(self):
+        result = []
         for idx, cat in enumerate(self.categories):
-            style = "bold green reverse" if idx == self.selected_category_idx and self.active_pane == "categories" else "white"
-            if idx == self.selected_category_idx and self.active_pane == "commands":
-                style = "bold green" # Highlight selected parent even if focus is child
+            if idx == self.selected_category_idx:
+                style = "class:selected" if self.active_pane == "categories" else "class:active-parent"
+                prefix = "➤ "
+            else:
+                style = ""
+                prefix = "  "
             
-            prefix = "➤ " if idx == self.selected_category_idx else "  "
-            cat_text.append(f"{prefix}{cat}\n", style=style)
-            
-        layout["categories"].update(
-            Panel(cat_text, title="Categories", border_style="green" if self.active_pane == "categories" else "dim")
-        )
-        
-        # Commands List
+            result.append((style, f"{prefix}{cat}\n"))
+        return result
+
+    def get_commands_text(self):
         current_cat = self.categories[self.selected_category_idx]
         commands = self.CATEGORIES[current_cat]
         
-        cmd_text = Text()
+        result = []
         for idx, (cmd, desc) in enumerate(commands):
-            style = "bold cyan reverse" if idx == self.selected_command_idx and self.active_pane == "commands" else "white"
-            prefix = "➤ " if idx == self.selected_command_idx and self.active_pane == "commands" else "  "
-            
-            cmd_text.append(f"{prefix}{cmd:<15} ", style=style)
-            cmd_text.append(f"{desc}\n", style="dim" if style == "white" else "black on cyan")
-            
-        layout["commands"].update(
-            Panel(cmd_text, title=f"Commands: {current_cat}", border_style="cyan" if self.active_pane == "commands" else "dim")
+            if idx == self.selected_command_idx and self.active_pane == "commands":
+                style = "class:selected"
+                prefix = "➤ "
+            else:
+                style = ""
+                prefix = "  "
+                
+            # Pad command for alignment
+            result.append((style, f"{prefix}{cmd:<15} "))
+            result.append((style + " class:description", f"{desc}\n"))
+        return result
+
+    def run(self):
+        root_container = HSplit([
+            # Header
+            Frame(
+                Window(FormattedTextControl(HTML("<b>🧞 DJINN Interactive Help</b>")), align=WindowAlign.CENTER, height=1),
+                style="class:header"
+            ),
+            # Body
+            VSplit([
+                # Categories Column
+                Frame(
+                    Window(FormattedTextControl(self.get_categories_text)),
+                    title="Categories",
+                    style="class:pane"
+                ),
+                # Commands Column
+                Frame(
+                    Window(FormattedTextControl(self.get_commands_text)),
+                    title=lambda: f"Commands: {self.categories[self.selected_category_idx]}",
+                    style="class:pane"
+                )
+            ]),
+            # Footer
+            Frame(
+                Window(FormattedTextControl(HTML("Navigate: <b>↑ ↓ ← →</b> | Select: <b>Enter</b> | Quit: <b>q</b>")), align=WindowAlign.CENTER, height=1),
+                style="class:footer"
+            )
+        ])
+
+        style = Style.from_dict({
+            "header": "bg:#8800ff #ffffff bold",
+            "footer": "#888888",
+            "selected": "reverse",
+            "active-parent": "bold underline",
+            "description": "#aaaaaa italic",
+            "pane": "border:#00aa00"
+        })
+
+        app = Application(
+            layout=Layout(root_container),
+            key_bindings=self.kb,
+            style=style,
+            full_screen=True,
+            mouse_support=True
         )
-        
-        # Footer
-        layout["footer"].update(
-            Panel(Align.center("Navigate: [bold]↑ ↓ ← →[/bold] | Select: [bold]Enter[/bold] | Quit: [bold]q[/bold]"), style="dim")
-        )
-        
-        return layout
+        app.run()
 
 def launch_help():
     """Launch the interactive help navigator."""
-    navigator = RichHelpNavigator()
+    navigator = HelpNavigator()
     try:
         navigator.run()
     except Exception as e:
-        console.print(f"[red]Error starting interactive help: {e}[/red]")
+        print(f"Error starting interactive help: {e}")
