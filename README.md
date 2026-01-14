@@ -1,14 +1,26 @@
-# DJINN - Terminal Sorcery at Your Command 🧞‍♂️
+<div align="center">
 
-<p align="center">
-  <img src="assets/djinn_logo.png" width="300" alt="DJINN Logo">
-</p>
+<img src="assets/djinn_logo.png" width="200" alt="DJINN Logo">
 
-[![PyPI Version](https://img.shields.io/pypi/v/djinn-cli.svg?color=blue)](https://pypi.org/project/djinn-cli/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/djinn-cli.svg)](https://pypi.org/project/djinn-cli/)
-[![License](https://img.shields.io/github/license/boubli/djinn.svg)](LICENSE)
+<br>
 
-**DJINN** is an AI-powered CLI that converts natural language into precise shell commands. Stop memorizing flags; just ask.
+[![PyPI Version](https://img.shields.io/pypi/v/djinn-cli.svg?color=green&label=version)](https://pypi.org/project/djinn-cli/)
+[![Python Versions](https://img.shields.io/badge/python-3.8+-blue.svg)](https://pypi.org/project/djinn-cli/)
+[![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+[![Commands](https://img.shields.io/badge/commands-60%2B-orange.svg)](https://github.com/boubli/djinn)
+[![Plugins](https://img.shields.io/badge/plugins-900%2B-red.svg)](https://github.com/boubli/djinn)
+
+# ⚡ DJINN
+
+### The Ultimate AI-Powered CLI Tool
+
+Transform natural language into precise shell commands with 60+ built-in commands and 900+ plugin templates.
+<br>
+TUI Dashboard • Universal Package Manager • Voice Control • AI Code Reviewer
+
+</div>
+
+<br>
 
 ```bash
 djinn "find all files larger than 100MB and sort by size"
