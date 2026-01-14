@@ -228,10 +228,9 @@ def main(ctx, interactive, mini, version, help):
     if interactive or getattr(sys, 'frozen', False):
          run_interactive(backend, model, context=True, api_key=api_key)
     else:
-        # Default behavior: Show standard help text
-        # User requested TUI only on --help
-        click.echo(ctx.get_help())
-        ctx.exit()
+        # Default behavior: Launch Interactive Shell (REPL)
+        # User requested "Logo only and things" (Interactive Mode)
+        run_interactive(backend, model, context=True, api_key=api_key)
 
 
 @main.command(name="summon", hidden=True)
