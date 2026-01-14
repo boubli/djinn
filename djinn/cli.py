@@ -76,26 +76,34 @@ def auto_detect_backend() -> tuple:
     if api_key:
         return {"backend": "openai", "model": "gpt-4o", "api_key": api_key, "theme": "default"}, True
     
-    # Check Ollama (default port 11434)
-    try:
-        r = requests.get("http://localhost:11434/api/tags", timeout=2)
-        if r.status_code == 200:
-            models = r.json().get("models", [])
-            model = models[0]["name"] if models else "llama3.2"
+    # Helper to check a URL
+    def check_url(url, endpoint, key):
+        try:
+            r = requests.get(f"{url}{endpoint}", timeout=1)
+            if r.status_code == 200:
+                data = r.json()
+                if key == "ollama":
+                    models = data.get("models", [])
+                    return models[0]["name"] if models else "llama3.2"
+                elif key == "lmstudio":
+                    models = data.get("data", [])
+                    return models[0]["id"] if models else "local-model"
+        except:
+            return None
+        return None
+
+    # Check Ollama (localhost and 127.0.0.1)
+    for host in ["http://localhost:11434", "http://127.0.0.1:11434"]:
+        model = check_url(host, "/api/tags", "ollama")
+        if model:
             return {"backend": "ollama", "model": model, "theme": "default"}, True
-    except:
-        pass
-    
-    # Check LM Studio (default port 1234)
-    try:
-        r = requests.get("http://localhost:1234/v1/models", timeout=2)
-        if r.status_code == 200:
-            models = r.json().get("data", [])
-            model = models[0]["id"] if models else "local-model"
+
+    # Check LM Studio
+    for host in ["http://localhost:1234", "http://127.0.0.1:1234"]:
+        model = check_url(host, "/v1/models", "lmstudio")
+        if model:
             return {"backend": "lmstudio", "model": model, "theme": "default"}, True
-    except:
-        pass
-    
+
     # No backend detected - return defaults with False flag
     return {"backend": "ollama", "model": "llama3.2", "theme": "default"}, False
 
@@ -138,33 +146,30 @@ class DjinnGroup(click.Group):
         if args and args[0] in self.commands:
             return super().parse_args(ctx, args)
         
-        # If the first arg is NOT a subcommand, we treat everything as a "summon" command
-        # But we need to check if there are any flags that belong to the group itself (-v, -i, etc)
-        # Standard click parsing is tricky here. 
-        # Strategy: attempt to parse options. If we see a non-option that is NOT a command, 
-        # assume it's the start of the prompt for the default command.
+        # Check aliases
+        if args and args[0] == "marketplace":
+             args[0] = "market"
+             return super().parse_args(ctx, args)
+
         return super().parse_args(ctx, args)
 
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        # No subcommand found. Check if it's a known option or version flag
-        # If not, return the default 'summon' command
         return self.get_command(ctx, "summon")
 
     def resolve_command(self, ctx, args):
-        # Check if the first argument is a known subcommand
-        # We use a protected method _get_command if available or just check list
         cmd_name = args[0] if args else ""
         
-        # If it's a known command (or help/version flag which usually handled before), route to it
+        # Alias handling
+        if cmd_name == "marketplace":
+            cmd_name = "market"
+            args[0] = "market"
+
         if cmd_name in self.commands:
             return super().resolve_command(ctx, args)
             
-        # If not a known command, we assume it's a prompt for 'summon'
-        # We return 'summon' as the command name, the summon command object, and ALL args
-        # This prevents the first word from being consumed as the command name
         summon_cmd = self.get_command(ctx, "summon")
         return "summon", summon_cmd, args
 
