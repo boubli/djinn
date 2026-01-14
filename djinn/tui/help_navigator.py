@@ -1,19 +1,15 @@
 """
-Interactive Help Navigator using Rich.
-Allows users to explore commands by category with keyboard navigation.
+Interactive Help Navigator using Prompt Toolkit.
+Allows users to explore commands by category with robust keyboard navigation.
 """
-import sys
-import click
-from rich.console import Console
-from rich.layout import Layout
-from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
-from rich.live import Live
-from rich.align import Align
-from djinn.ui.theme import Theme
-
-console = Console()
+from prompt_toolkit import Application
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.layout.containers import HSplit, VSplit, Window, WindowAlign
+from prompt_toolkit.layout.controls import FormattedTextControl
+from prompt_toolkit.layout.layout import Layout
+from prompt_toolkit.widgets import Frame
+from prompt_toolkit.styles import Style
+from prompt_toolkit.formatted_text import HTML
 
 class HelpNavigator:
     """Interactive help menu with categories and navigation."""
@@ -103,105 +99,41 @@ class HelpNavigator:
         self.selected_category_idx = 0
         self.selected_command_idx = 0
         self.active_pane = "categories"  # 'categories' or 'commands'
-        self.running = True
-
-    def run(self):
-        """Start the interactive loop."""
-        with Live(self.make_layout(), refresh_per_second=10, screen=True) as live:
-            while self.running:
-                live.update(self.make_layout())
-                char = click.getchar()
-                self.handle_input(char)
-
-    def handle_input(self, char):
-        """Handle keyboard input."""
-        if char in ('q', 'Q', '\x03'):  # q or Ctrl+C
-            self.running = False
-            return
         
-        # Navigation
-        if char == '\r':  # Enter
+        self.kb = KeyBindings()
+        self.setup_keybindings()
+
+    def setup_keybindings(self):
+        @self.kb.add('q')
+        @self.kb.add('c-c')
+        def _(event):
+            event.app.exit()
+
+        @self.kb.add('up')
+        def _(event):
+            if self.active_pane == "categories":
+                self.selected_category_idx = (self.selected_category_idx - 1) % len(self.categories)
+            else:
+                cat_name = self.categories[self.selected_category_idx]
+                cmds = self.CATEGORIES[cat_name]
+                self.selected_command_idx = (self.selected_command_idx - 1) % len(cmds)
+
+        @self.kb.add('down')
+        def _(event):
+            if self.active_pane == "categories":
+                self.selected_category_idx = (self.selected_category_idx + 1) % len(self.categories)
+            else:
+                cat_name = self.categories[self.selected_category_idx]
+                cmds = self.CATEGORIES[cat_name]
+                self.selected_command_idx = (self.selected_command_idx + 1) % len(cmds)
+
+        @self.kb.add('right')
+        @self.kb.add('enter')
+        @self.kb.add('tab')
+        def _(event):
             if self.active_pane == "categories":
                 self.active_pane = "commands"
                 self.selected_command_idx = 0
-            else:
-                # Execute/Show help for command?
-                # For now just toggle back
-                pass
-        
-        elif char == '\x1b':  # Escape sequence
-            # Handle arrow keys (simplified for standard ANSI)
-            # This is a bit tricky with click.getchar() as it returns chars one by one
-            # Usually users use libraries like `readchar` or `cureses` for this.
-            # But for simplicity, we assume generic arrow handling or use prompt_toolkit if available.
-            pass
-        
-        # Simple mapping for Windows/VSCode terminal often sends special codes
-        # We'll use a simpler approach: 
-        # w/s for up/down in categories
-        # a/d for switch panes?
-        # Actually, let's use prompt_toolkit given it's a dependency.
-        pass
-
-# Redefine run using prompt_toolkit for better key handling
-from prompt_toolkit import Application
-from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.layout import Layout as PTLayout
-from prompt_toolkit.layout.containers import Window, HSplit, VSplit
-from prompt_toolkit.layout.controls import FormattedTextControl
-from prompt_toolkit.formatted_text import HTML
-
-class PromptToolkitNavigator:
-    def __init__(self):
-        self.categories = list(HelpNavigator.CATEGORIES.keys())
-        self.cat_idx = 0
-        self.cmd_idx = 0
-        self.focus = "categories" # categories, commands
-
-    def get_layout(self):
-        # We will render the Rich layout to a string (or use PT widgets)
-        # Using Rich inside PT is complex.
-        # Let's stick to pure Rich with a loop, but handle keys better.
-        pass
-
-# Back to Rich + Click.getchar() specific handling
-def get_key():
-    first_char = click.getchar()
-    if first_char == '\xe0': # Windows arrow prefix
-        second_char = click.getchar()
-        if second_char == 'H': return 'up'
-        if second_char == 'P': return 'down'
-        if second_char == 'K': return 'left'
-        if second_char == 'M': return 'right'
-    if first_char == '\x1b': # Unix arrow prefix
-        second_char = click.getchar()
-        if second_char == '[':
-            third_char = click.getchar()
-            if third_char == 'A': return 'up'
-            if third_char == 'B': return 'down'
-            if third_char == 'C': return 'right'
-            if third_char == 'D': return 'left'
-    return first_char
-
-class RichHelpNavigator(HelpNavigator):
-    def run(self):
-        with Live(self.make_layout(), refresh_per_second=20, screen=True) as live:
-            while self.running:
-                live.update(self.make_layout())
-                key = get_key()
-                
-                if key in ('q', 'Q', '\x03'):
-                    self.running = False
-                elif key == 'up':
-                    if self.active_pane == "categories":
-                        self.selected_category_idx = (self.selected_category_idx - 1) % len(self.categories)
-                    else:
-                        cat_name = self.categories[self.selected_category_idx]
-                        cmds = self.CATEGORIES[cat_name]
-                        self.selected_command_idx = (self.selected_command_idx - 1) % len(cmds)
-                elif key == 'down':
-                    if self.active_pane == "categories":
-                        self.selected_category_idx = (self.selected_category_idx + 1) % len(self.categories)
 
         @self.kb.add('left')
         @self.kb.add('escape')
